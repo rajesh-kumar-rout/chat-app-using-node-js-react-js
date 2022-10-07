@@ -2,15 +2,18 @@ import styles from "./ChangePasswordPage.module.css"
 import buttons from "../../styles/Buttons.module.css"
 import form from "../../styles/Form.module.css"
 import { useState } from "react"
+import useRequest from "../../hooks/useRequest"
+import { CLIENT_ERROR, SERVER_ERROR } from "../../utils/constants"
 
 export default function ChangePasswordPage() {
+    const request = useRequest()
+    const [errors, setErrors] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
     const [inputs, setInputs] = useState({
         oldPassword: "",
         newPassword: "",
         confirmNewPassword: ""
     })
-    const [errors, setErrors] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
 
     const hanelInputChange = (e) => {
         setInputs({
@@ -35,9 +38,9 @@ export default function ChangePasswordPage() {
             errors.push("New must be within 6-20 characters")
         }
 
-        if(!confirmNewPassword){
+        if (!confirmNewPassword) {
             errors.push("Please confirm your new password")
-        }else if(confirmNewPassword !== newPassword){
+        } else if (confirmNewPassword !== newPassword) {
             errors.push("New password does not match")
         }
 
@@ -45,21 +48,34 @@ export default function ChangePasswordPage() {
         return errors.length > 0
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
-        if(isInputInvalid()) return
+        if (isInputInvalid()) return
 
         setIsLoading(true)
-
-        setTimeout(() => {
-            setIsLoading(false)
-            setInputs({
-                oldPassword: "",
-                newPassword: "",
-                confirmNewPassword: ""
+        try {
+            const response = await request("/auth/change-password", {
+                method: "PATCH",
+                body: JSON.stringify(inputs)
             })
-        }, 1000);
+            if (response.status === 200) {
+                alert("Password changed successfully")
+                setInputs({
+                    oldPassword: "",
+                    newPassword: "",
+                    confirmNewPassword: ""
+                })
+            } else if (response.status === 422) {
+                alert("Old password does not match")
+            } else {
+                alert(SERVER_ERROR)
+            }
+        } catch {
+            alert(CLIENT_ERROR)
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -80,24 +96,24 @@ export default function ChangePasswordPage() {
 
                 <div className={form.group}>
                     <label className={form.label} htmlFor="oldPassword">Old Password</label>
-                    <input 
-                        type="password" 
+                    <input
+                        type="password"
                         className={form.textInput}
-                        name="oldPassword" 
-                        id="oldPassword" 
+                        name="oldPassword"
+                        id="oldPassword"
                         value={inputs.oldPassword}
                         onChange={hanelInputChange}
-                        
+
                     />
                 </div>
 
                 <div className={form.group}>
                     <label className={form.label} htmlFor="newPassword">Old Password</label>
-                    <input 
-                        type="password" 
+                    <input
+                        type="password"
                         className={form.textInput}
-                        name="newPassword" 
-                        id="newPassword" 
+                        name="newPassword"
+                        id="newPassword"
                         value={inputs.newPassword}
                         onChange={hanelInputChange}
                     />
@@ -105,11 +121,11 @@ export default function ChangePasswordPage() {
 
                 <div className={form.group}>
                     <label className={form.label} htmlFor="confirmNewPassword">Old Password</label>
-                    <input 
-                        type="password" 
+                    <input
+                        type="password"
                         className={form.textInput}
-                        name="confirmNewPassword" 
-                        id="confirmNewPassword" 
+                        name="confirmNewPassword"
+                        id="confirmNewPassword"
                         value={inputs.confirmNewPassword}
                         onChange={hanelInputChange}
                     />

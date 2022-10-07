@@ -1,15 +1,20 @@
 import styles from "./EditAccountPage.module.css"
 import buttons from "../../styles/Buttons.module.css"
 import form from "../../styles/Form.module.css"
-import { useState } from "react"
+import { useContext, useState } from "react"
+import {AccountContext} from "../../components/Account"
+import { CLIENT_ERROR, SERVER_ERROR } from "../../utils/constants"
+import useRequest from "../../hooks/useRequest"
 
 export default function EditAccountPage() {
-    const [inputs, setInputs] = useState({
-        email: "",
-        name: ""
-    })
+    const request = useRequest()
+    const { account, setAccount } = useContext(AccountContext)
     const [errors, setErrors] = useState([])
     const [isLoading, setIsLoading] = useState(false)
+    const [inputs, setInputs] = useState({
+        name: account.name,
+        email: account.email
+    })
 
     const handleInputChange = (e) => {
         setInputs({
@@ -39,16 +44,34 @@ export default function EditAccountPage() {
         return errors.length > 0
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
-        if(isInputInvalid()) return
+        if (isInputInvalid()) return
 
         setIsLoading(true)
-
-        setTimeout(() => {
+        try {
+            const response = await request("/auth/edit-account", {
+                method: "PATCH",
+                body: JSON.stringify(inputs)
+            })
+            if (response.status === 200) {
+                alert("Account edited successfully")
+                setAccount({
+                    ...account,
+                    name: inputs.name,
+                    email: inputs.email
+                })
+            } else if (response.status === 409) {
+                alert("Email already taken")
+            } else {
+                alert(SERVER_ERROR)
+            }
+        } catch {
+            alert(CLIENT_ERROR)
+        } finally {
             setIsLoading(false)
-        }, 1000);
+        }
     }
 
     return (
@@ -92,7 +115,7 @@ export default function EditAccountPage() {
                 </div>
 
                 <button disabled={isLoading} className={buttons.indigoFull}>
-                    {isLoading ? "Loading..." : "CHANGE PASSWORD"}
+                    {isLoading ? "Loading..." : "SAVE CHANGES"}
                 </button>
             </form>
         </div>

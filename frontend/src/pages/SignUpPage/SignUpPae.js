@@ -1,11 +1,15 @@
 import styles from "./SignUpPage.module.css"
 import buttons from "../../styles/Buttons.module.css"
 import form from "../../styles/Form.module.css"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import Footer from "../../components/Footer/Footer"
 import { useState } from "react"
+import { CLIENT_ERROR, SERVER_ERROR } from "../../utils/constants"
+import useRequest from "../../hooks/useRequest"
 
 export default function SignUpPage() {
+    const request = useRequest()
+    const navigate = useNavigate()
     const [inputs, setInputs] = useState({
         name: "",
         email: "",
@@ -54,16 +58,30 @@ export default function SignUpPage() {
         return errors.length > 0
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
         if (isInputInvalid()) return
 
         setIsLoading(true)
-
-        setTimeout(() => {
+        try {
+            const response = await request("/auth/sign-up", {
+                method: "POST",
+                body: JSON.stringify(inputs)
+            })
+            if (response.status === 201) {
+                alert("Sign up successfull.\nPlease login.")
+                navigate("/login", { replace: true })
+            } else if (response.status === 409) {
+                alert("Email already taken")
+            } else {
+                alert(SERVER_ERROR)
+            }
+        } catch {
+            alert(CLIENT_ERROR)
+        } finally {
             setIsLoading(false)
-        }, 1000);
+        }
     }
 
     return (

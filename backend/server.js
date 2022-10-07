@@ -6,7 +6,9 @@ import authRoutes from "./routes/auth.js"
 import { authenticate, authenticateSocket } from "./middlewares/authentication.js"
 import { setSocketUser } from "./middlewares/socket.js"
 import cors from "cors"
+import { config } from "dotenv"
 
+config()
 const app = express()
 const server = http.createServer(app)
 const io = new Server(server)
@@ -40,6 +42,6 @@ io.on("connection", (socket) => {
     })
 })
 
-server.listen(3000, () => {
-    console.log("listening to port 3000...")
+server.listen(process.env.PORT, () => {
+    console.log(`listening to port ${process.env.PORT}...`)
 })

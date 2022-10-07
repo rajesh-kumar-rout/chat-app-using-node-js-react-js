@@ -17,7 +17,7 @@ CREATE TABLE "rooms" (
 );
 
 CREATE TABLE "roomMembers" (
-    "memberId" INTEGER,
+    "userId" INTEGER,
     "roomId" INTEGER,
     "joinedAt" TIMESTAMP DEFAULT NOW(),
     

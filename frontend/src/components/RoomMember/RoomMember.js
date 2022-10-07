@@ -6,7 +6,7 @@ export default function RoomMember({ member }) {
             <h3>{member.name}</h3>
 
             <p className={styles.subTitle}>
-                by - {member.joinedAt}
+                joined At - {member.createdAt}
             </p>
         </div>
     )

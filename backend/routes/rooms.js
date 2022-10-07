@@ -21,6 +21,7 @@ router.post(
         }
 
         const room = await query('INSERT INTO rooms ("adminId", name) VALUES ($1, $2) RETURNING *', [currentUserId, name])
+        await query('INSERT INTO "roomMembers" ("userId", "roomId") VALUES ($1, $2) RETURNING *', [currentUserId, room.id])
 
         res.status(201).json(room)
     }
@@ -105,7 +106,7 @@ router.get(
     "/",
 
     async (req, res) => {
-        const rooms = await queryAll('SELECT rooms.id, rooms.name, users.name AS "adminName", rooms."createdAt" FROM rooms INNER JOIN users ON users.id = rooms."adminId"')
+        const rooms = await queryAll('SELECT rooms.id, rooms.name, rooms."createdAt", users.name AS "admin", users.id AS "adminId" FROM rooms INNER JOIN users ON users.id = rooms."adminId"')
 
         res.json(rooms)
     }
