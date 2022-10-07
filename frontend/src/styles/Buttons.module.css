@@ -1,0 +1,28 @@
+.white{
+    padding: 8px 16px;
+    border-radius: 4px;
+    background-color: var(--color-white);
+    cursor: pointer;
+    color: var(--color-gray-700);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.indigoFull{
+    width: 100%;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background-color: var(--color-indigo-600);
+    cursor: pointer;
+    color: var(--color-white);
+    transition: all 300ms;
+    font-weight: 600;
+}
+
+.indigoFull:hover{
+    background-color: var(--color-indigo-800);
+}
+
+.indigoFull:disabled{
+    background-color: var(--color-indigo-400);
+}

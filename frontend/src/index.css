@@ -1,0 +1,54 @@
+/* -------------------------------------------------------------------------------------
+------------------------------------- BASIC SET UP -------------------------------------
+---------------------------------------------------------------------------------------- */
+:root {
+    --color-gray-50: #f9fafb;
+    --color-gray-100: #f3f4f6;
+    --color-gray-200: #e5e7eb;
+    --color-gray-300: #d1d5db;
+    --color-gray-200: #e5e7eb;
+    --color-gray-600: #4b5563;
+    --color-gray-700: #374151;
+    --color-indigo-400: #818cf8;
+    --color-indigo-600: #4f46e5;
+    --color-indigo-800: #3730a3;
+    --color-white: #FFFFFF;
+    --color-black: #000000;
+}
+
+* {
+    margin: 0%;
+    padding: 0%;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    text-decoration: none;
+    border: none;
+    outline: none;
+    background: none;
+    color: var(--color-black);
+    font-size: 16px;
+}
+
+a {
+    color: var(--color-indigo-600);
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--color-indigo-600);
+}
+
+svg {
+    display: block;
+}
+
+body {
+    background-color: var(--color-indigo-400);
+}

@@ -1,0 +1,44 @@
+.container{
+    border-radius: 4px;
+    width: 700px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    height: 95%;
+    overflow: hidden;
+}
+
+.heading{
+    background-color: var(--color-gray-200);
+    padding: 16px 8px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.content{
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: var(--color-white);
+    flex: 1;
+    overflow-y: auto;
+}
+
+.footer{
+    display: flex;
+    background-color: var(--color-gray-300);
+}
+
+.input{
+    flex: 1;
+    padding: 16px 12px;
+    font-size: 16px;
+}
+
+.btnSend{
+    padding: 0px 12px;
+    cursor: pointer;
+}
