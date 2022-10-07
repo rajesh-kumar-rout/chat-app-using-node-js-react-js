@@ -1,0 +1,58 @@
+.navbar{
+    background-color: var(--color-white);
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+    padding: 0px 100px;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+
+@media (max-width: 700px) {
+    .navbar{
+        padding: 0px 10px;
+    }
+}
+
+.title{
+    color: var(--color-indigo-600);
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.icons{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.icon{
+    fill: var(--color-indigo-600);
+    cursor: pointer;
+}
+
+.dropDownWrapper{
+    position: relative;
+}
+
+.dropDown{
+    position: absolute;
+    right: 0px;
+    background-color: var(--color-indigo-600);
+    border-radius: 4px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 200px;
+    margin-top: 20px;
+}
+
+.dropDownItem{
+    color: var(--color-white);
+    cursor: pointer;
+}

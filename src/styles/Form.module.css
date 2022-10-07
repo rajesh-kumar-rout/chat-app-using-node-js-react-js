@@ -1,0 +1,38 @@
+.group{
+    margin-bottom: 16px;
+}
+
+.label{
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
+.errors{
+    margin-bottom: 16px;
+}
+
+.errors *{
+    color: red;
+    margin-bottom: 4px;
+}
+
+.errors ul{
+    list-style-position: inside;
+}
+
+.errors *:last-child{
+    margin-bottom: 0px;
+}
+
+.textInput{
+    border: 2px solid var(--color-gray-300);
+    border-radius: 4px;
+    padding: 8px;
+    width: 100%;
+    display: block;
+}
+
+.textInput:focus{
+    border-color: var(--color-indigo-600);
+}

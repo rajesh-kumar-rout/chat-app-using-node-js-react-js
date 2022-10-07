@@ -1,0 +1,40 @@
+.container {
+    border-radius: 4px;
+    width: 700px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    height: 95%;
+    overflow-x: hidden;
+}
+
+@media (max-width: 700px) {
+    .container {
+        border-radius: 0px;
+    }
+}
+
+.header {
+    background-color: var(--color-gray-200);
+    padding: 16px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.input{
+    flex: 1;
+    caret-color: var(--color-indigo-600);
+}
+
+.content {
+    background-color: var(--color-white);
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+

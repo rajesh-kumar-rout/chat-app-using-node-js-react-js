@@ -1,0 +1,35 @@
+.container{
+    display: flex;
+}
+
+.container[data-right=true]{
+    justify-content: flex-end;
+}
+
+.innerContainer{
+    max-width: 80%;
+    text-align: right;
+}
+
+.username{
+    font-size: 12px;
+}
+
+.chat{
+    background-color: var(--color-indigo-600);
+    padding: 8px;
+    display: inline-block;
+    border-radius: 4px;
+    margin: 4px 0px;
+    color: var(--color-white);
+    font-size: 14px;
+    text-align: left;
+}
+
+.chat[data-right=true]{
+    background-color: var(--color-gray-600);
+}
+
+.time{
+    font-size: 12px;
+}

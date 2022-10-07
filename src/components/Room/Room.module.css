@@ -1,0 +1,30 @@
+.container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 4px;
+    background-color: var(--color-indigo-600);
+    padding: 12px;
+    color: var(--color-white)
+}
+
+.container *{
+    color: var(--color-white);
+}
+
+.subTitle{
+    color: var(--color-gray-200);
+    margin-top: 4px;
+    font-size: 14px;
+}
+
+.icons{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.icon{
+    cursor: pointer;
+    fill: var(--color-white);
+}

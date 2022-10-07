@@ -1,0 +1,36 @@
+.container {
+    border-radius: 4px;
+    width: 700px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+}
+
+@media (max-width: 700px) {
+    .container {
+        width: 100%;
+        border-radius: 0px;
+    }
+}
+
+.header {
+    background-color: var(--color-gray-200);
+    padding: 16px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.content {
+    background-color: var(--color-white);
+    padding: 16px;
+}
+
+.link{
+    text-align: center;
+    margin-top: 16px;
+}
