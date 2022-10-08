@@ -7,28 +7,27 @@ import styles from "./ChatPage.module.css"
 export default function ChatPage() {
     return (
         <div className={styles.container}>
-            <div className={styles.heading}>
+            <div className={styles.header}>
                 <Link to="/">
                     <MdArrowBack size={24}/>
                 </Link>
 
-                <p>React Youtube</p>
+                <p>John Doe</p>
             </div>
 
-            <div className={styles.content}>
+            <div className={styles.body}>
                 {messages.map(message => <Message message={message}/>)}
             </div>
 
-            <div className={styles.footer}>
+            <form className={styles.footer}>
                 <input
                     type="text"
                     placeholder="Write Message..."
-                    className={styles.input}
                 />
-                <button className={styles.btnSend}>
+                <button>
                     <MdSend size={24} />
                 </button>
-            </div>
+            </form>
         </div>
     )
 }

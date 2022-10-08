@@ -1,31 +1,31 @@
-.group{
+.group {
     margin-bottom: 16px;
 }
 
-.label{
+.label {
     font-weight: 600;
     margin-bottom: 8px;
     display: inline-block;
 }
 
-.errors{
+.errors {
     margin-bottom: 16px;
 }
 
-.errors *{
+.errors * {
     color: red;
     margin-bottom: 4px;
 }
 
-.errors ul{
+.errors ul {
     list-style-position: inside;
 }
 
-.errors *:last-child{
+.errors *:last-child {
     margin-bottom: 0px;
 }
 
-.textInput{
+.textInput {
     border: 2px solid var(--color-gray-300);
     border-radius: 4px;
     padding: 8px;
@@ -33,6 +33,6 @@
     display: block;
 }
 
-.textInput:focus{
-    border-color: var(--color-indigo-600);
+.textInput:focus {
+    border-color: var(--color-gray-600);
 }

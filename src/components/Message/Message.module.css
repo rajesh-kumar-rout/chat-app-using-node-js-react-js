@@ -1,21 +1,17 @@
-.container{
+.container {
     display: flex;
 }
 
-.container[data-right=true]{
+.container[data-right=true] {
     justify-content: flex-end;
 }
 
-.innerContainer{
+.innerContainer {
     max-width: 80%;
     text-align: right;
 }
 
-.username{
-    font-size: 12px;
-}
-
-.chat{
+.chat {
     background-color: var(--color-indigo-600);
     padding: 8px;
     display: inline-block;
@@ -26,10 +22,10 @@
     text-align: left;
 }
 
-.chat[data-right=true]{
+.chat[data-right=true] {
     background-color: var(--color-gray-600);
 }
 
-.time{
+.sendAt {
     font-size: 12px;
 }
