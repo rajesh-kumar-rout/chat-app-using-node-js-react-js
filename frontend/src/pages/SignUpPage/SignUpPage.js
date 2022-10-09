@@ -1,23 +1,23 @@
-import styles from "./SignUpPage.module.css"
-import buttons from "../../styles/Buttons.module.css"
-import form from "../../styles/Form.module.css"
 import { Link, useNavigate } from "react-router-dom"
 import Footer from "../../components/Footer/Footer"
 import { useState } from "react"
 import { CLIENT_ERROR, SERVER_ERROR } from "../../utils/constants"
 import useRequest from "../../hooks/useRequest"
+import styles from "./SignUpPage.module.css"
+import button from "../../styles/Button.module.css"
+import form from "../../styles/Form.module.css"
 
 export default function SignUpPage() {
     const request = useRequest()
     const navigate = useNavigate()
+    const [errors, setErrors] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
     const [inputs, setInputs] = useState({
         name: "",
         email: "",
         password: "",
         confirmPassword: ""
     })
-    const [errors, setErrors] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
 
     const handleInputChange = (e) => {
         setInputs({
@@ -89,7 +89,7 @@ export default function SignUpPage() {
             <form onSubmit={handleSubmit} className={styles.container}>
                 <div className={styles.header}>SIGN UP</div>
 
-                <div className={styles.content}>
+                <div className={styles.body}>
                     {errors.length > 0 && (
                         <div className={form.errors}>
                             <p>Please correct the following errors.</p>
@@ -149,7 +149,7 @@ export default function SignUpPage() {
                         />
                     </div>
 
-                    <button disabled={isLoading} className={buttons.indigoFull}>
+                    <button disabled={isLoading} className={button.btn} data-primary={true}>
                         {isLoading ? "Loading..." : "SIGN UP"}
                     </button>
 

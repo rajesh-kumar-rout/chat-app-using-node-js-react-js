@@ -1,9 +1,9 @@
-import styles from "./ChangePasswordPage.module.css"
-import buttons from "../../styles/Buttons.module.css"
-import form from "../../styles/Form.module.css"
 import { useState } from "react"
 import useRequest from "../../hooks/useRequest"
 import { CLIENT_ERROR, SERVER_ERROR } from "../../utils/constants"
+import styles from "./ChangePasswordPage.module.css"
+import button from "../../styles/Button.module.css"
+import form from "../../styles/Form.module.css"
 
 export default function ChangePasswordPage() {
     const request = useRequest()
@@ -80,9 +80,9 @@ export default function ChangePasswordPage() {
 
     return (
         <div className={styles.container}>
-            <div className={styles.header}>CHANGE PASSWORD</div>
+            <div className={styles.header}>CHANGE PASSWORDD</div>
 
-            <form onSubmit={handleSubmit} className={styles.content}>
+            <form onSubmit={handleSubmit} className={styles.body}>
                 {errors.length > 0 && (
                     <div className={form.errors}>
                         <p>Please correct the following errors.</p>
@@ -131,7 +131,11 @@ export default function ChangePasswordPage() {
                     />
                 </div>
 
-                <button disabled={isLoading} className={buttons.indigoFull}>
+                <button 
+                    disabled={isLoading} 
+                    className={button.btn}
+                    data-primary={true}
+                >
                     {isLoading ? "Loading..." : "CHANGE PASSWORD"}
                 </button>
             </form>

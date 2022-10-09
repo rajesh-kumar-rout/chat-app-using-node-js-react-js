@@ -1,7 +1,7 @@
 import express from "express"
 import http from "http"
 import { Server } from "socket.io"
-import roomRoutes from "./routes/rooms.js"
+import usersRoutes from "./routes/users.js"
 import authRoutes from "./routes/auth.js"
 import { authenticate, authenticateSocket } from "./middlewares/authentication.js"
 import { setSocketUser } from "./middlewares/socket.js"
@@ -17,7 +17,7 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use("/api/rooms", authenticate, roomRoutes)
+app.use("/api/users", authenticate, usersRoutes)
 app.use("/api/auth", authRoutes)
 
 io.use(authenticateSocket)

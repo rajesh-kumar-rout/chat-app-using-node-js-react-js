@@ -1,37 +1,24 @@
 CREATE TABLE "users" (
     "id" SERIAL PRIMARY KEY,
-    "name" VARCHAR(20) NOT NULL,
-    "email" VARCHAR(20) NOT NULL UNIQUE,
-    "password" VARCHAR(20) NOT NULL,
+    "name" VARCHAR(30) NOT NULL,
+    "email" VARCHAR(30) NOT NULL UNIQUE,
+    "password" VARCHAR(100) NOT NULL,
+    "profileImgUrl" VARCHAR(100) NOT NULL,
+    "profileImgId" VARCHAR(100) NOT NULL,
     "createdAt" TIMESTAMP DEFAULT NOW(),
     "updatedAt" TIMESTAMP DEFAULT NOW()
 );
 
-CREATE TABLE "rooms" (
-    "id" SERIAL PRIMARY KEY,
-    "name" VARCHAR(20),
-    "createdAt" TIMESTAMP DEFAULT NOW(),
-    "adminId" INTEGER,
-    
-    FOREIGN KEY ("adminId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE "roomMembers" (
-    "userId" INTEGER,
-    "roomId" INTEGER,
-    "joinedAt" TIMESTAMP DEFAULT NOW(),
-    
-    FOREIGN KEY ("memberId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY ("roomId") REFERENCES "rooms"("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
-
 CREATE TABLE "messages" (
     "id" SERIAL PRIMARY KEY,
-    "msg" VARCHAR(255),
-    "roomId" INTEGER,
-    "userId" INTEGER,
+    "message" VARCHAR(255),
+    "senderId" INTEGER,
+    "receiverId" INTEGER,
     "sendAt" TIMESTAMP DEFAULT NOW(),
     
-    FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY ("roomId") REFERENCES "rooms"("id") ON DELETE CASCADE ON UPDATE CASCADE
+    FOREIGN KEY ("senderId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY ("receiverId") REFERENCES "user"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+
+SELECT users.id, users.name, users."profileImgUrl", message FROM ( SELECT DISTINCT ON ("userId") "userId", "sendAt", message FROM ( SELECT * FROM ( (SELECT "receiverId" AS "userId", "sendAt", message FROM messages WHERE "senderId" = 1) UNION (SELECT "senderId" AS "userId", "sendAt", message FROM messages WHERE "receiverId" = 1 ) ) AS "recentUsers" ORDER BY "sendAt" DESC ) AS "recentUsers" ) AS "recentUsers" INNER JOIN users ON users.id = "recentUsers"."userId" ORDER BY "sendAt" DESC

@@ -5,11 +5,15 @@ export default function useRequest() {
     const navigate = useNavigate()
 
     return async (url, options) => {
-        if (options && options.body && !(options.body instanceof FormData)) {
-            !options && (options = {})
+        if (!options) {
+            options = {}
+        }
 
-            !options.headers && (options.headers = {})
+        if (!options.headers) {
+            options.headers = {}
+        }
 
+        if (typeof options.body === "string") {
             options.headers = {
                 ...options.headers,
                 "Content-Type": "application/json"
@@ -17,10 +21,6 @@ export default function useRequest() {
         }
 
         if (localStorage.getItem("jwtToken")) {
-            !options && (options = {})
-
-            !options.headers && (options.headers = {})
-
             options.headers = {
                 ...options.headers,
                 authorization: `Bearer ${localStorage.getItem("jwtToken")}`
