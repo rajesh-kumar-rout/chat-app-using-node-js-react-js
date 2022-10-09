@@ -1,10 +1,11 @@
 import { Router } from "express"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import { findOne, query } from "../database/connection.js"
+import { query } from "../database/connection.js"
 import { authenticate } from "../middlewares/authentication.js"
 import { body } from "express-validator"
-import { checkValidationError } from "../utils/validation.js"
+import { checkFileMimeType, checkIsFileTruncated, checkValidationError, files } from "../utils/validation.js"
+import { upload } from "../utils/cloudinary.js"
 
 const routes = Router()
 
@@ -20,7 +21,7 @@ routes.post(
     async (req, res) => {
         const { email, password } = req.body
 
-        const user = await findOne("SELECT * FROM users WHERE email = ? LIMIT 1", [email])
+        const user = await query("SELECT * FROM users WHERE email = $1 LIMIT 1", [email])
 
         if (!(user && await bcrypt.compare(password, user.password))) {
             return res.status(422).json({ message: "Invalid email or password" })
@@ -51,11 +52,11 @@ routes.post(
     async (req, res) => {
         const { name, email, password } = req.body
 
-        if (await findOne("SELECT 1 FROM users WHERE email = ? LIMIT 1", [email])) {
+        if (await query("SELECT 1 FROM users WHERE email = $1 LIMIT 1", [email])) {
             return res.status(409).json({ message: "Email already taken" })
         }
 
-        const user = await query("INSERT INTO users (name, email, password) VALUES (?, ?, ?, ?)", [name, email, await bcrypt.hash(password, 10)])
+        const user = await query("INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *", [name, email, await bcrypt.hash(password, 10)])
 
         res.status(201).json(user)
     }
@@ -76,13 +77,13 @@ routes.patch(
         const { currentUserId } = req.local
         const { oldPassword, newPassword } = req.body
 
-        const user = await query("SELECT password FROM users WHERE id = ? LIMIT 1", [currentUserId])
+        const user = await query("SELECT password FROM users WHERE id = $1 LIMIT 1", [currentUserId])
 
         if (!await bcrypt.compare(oldPassword, user.password)) {
             return res.status(422).json({ message: "Old password does not match" })
         }
 
-        await query("UPDATE users SET password = ? WHERE id = ?", [await bcrypt.hash(newPassword, 10), currentUserId])
+        await query("UPDATE users SET password = $1 WHERE id = $2", [await bcrypt.hash(newPassword, 10), currentUserId])
 
         res.json({ message: "Password changed successfully" })
     }
@@ -96,7 +97,7 @@ routes.get(
     async (req, res) => {
         const { currentUserId } = req.local
 
-        const user = await query("SELECT id, name, email, profileImgUrl, createdAt, updatedAt FROM users WHERE id = ? LIMIT 1", [currentUserId])
+        const user = await query('SELECT id, name, email, "profileImgUrl", "createdAt", "updatedAt" FROM users WHERE id = $1 LIMIT 1', [currentUserId])
 
         res.json(user)
     }
@@ -116,17 +117,34 @@ routes.patch(
         .toLowerCase()
         .isEmail(),
 
+    files("profileImg")
+        .optional()
+        .isObject()
+        .bail()
+        .custom(checkFileMimeType("image/jpeg", "image/jpeg", "image/png"))
+        .custom(checkIsFileTruncated),
+
     checkValidationError,
 
     async (req, res) => {
         const { currentUserId } = req.local
         const { name, email } = req.body
+        const { profileImg } = req.files
+
+        const user = await query('SELECT * FROM users WHERE id = $1 LIMIT 1', [currentUserId])
 
         if (await query("SELECT 1 FROM users WHERE email = $1 AND id != $2 LIMIT 1", [email, currentUserId])) {
             return res.status(409).json({ message: "Email already taken" })
         }
 
-        const updatedUser = await query('UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING id, name, email, "createdAt", "updatedAt"', [name, email, currentUserId])
+        if (profileImg) {
+            const { secure_url, public_id } = await upload(profileImg.tempFilePath)
+            user.profileImgUrl && await destroy(user.profileImgId)
+            user.profileImgUrl = secure_url
+            user.profileImgId = public_id
+        }
+
+        const updatedUser = await query('UPDATE users SET name = $1, email = $2, "profileImgUrl" = $3, "profileImgId" = $4 WHERE id = $5 RETURNING id, name, email, "profileImgUrl", "createdAt", "updatedAt"', [name, email, user.profileImgUrl, user.profileImgId, currentUserId])
 
         res.json(updatedUser)
     }
