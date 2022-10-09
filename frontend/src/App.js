@@ -17,7 +17,7 @@ export default function App() {
                 <Route element={<Layout />}>
                     <Route element={<Account />}>
                         <Route path="/" element={<HomePage />} />
-                        <Route path="/rooms/:roomId/chat" element={<ChatPage />} />
+                        <Route path="/rooms/chat" element={<ChatPage />} />
                         <Route path="/change-password" element={<ChangePasswordPage />} />
                         <Route path="/edit-account" element={<EditAccountPage />} />
                     </Route>

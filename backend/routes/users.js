@@ -6,7 +6,7 @@ import { body, param } from "express-validator"
 const router = Router()
 
 router.get("/", async (req, res) => {
-    const users = await queryAll('SELECT * FROM "recentConnectedUsers"')
+    const users = await queryAll('SELECT users.id, users.name, users."profileImgUrl" FROM users')
     res.json(users)
 })
 
@@ -17,7 +17,7 @@ router.post(
 
     body("message").isLength({ max: 255 }),
 
-    body("sendAt").isDate(),
+    body("sendAt").isISO8601(),
 
     checkValidationError,
 
@@ -26,7 +26,11 @@ router.post(
         const { message, sendAt } = req.body
         const { userId } = req.params
 
-        if (await query('SELECT 1 FROM users WHERE id = $1 LIMIT 1', [userId])) {
+        if (currentUserId === userId) {
+            return res.status(404).json({ message: "You can not be both sender and receiver." })
+        }
+
+        if (!await query('SELECT 1 FROM users WHERE id = $1 LIMIT 1', [userId])) {
             return res.status(404).json({ message: "Receiver not found" })
         }
 
@@ -47,7 +51,7 @@ router.get(
         const { userId } = req.params
         const { currentUserId } = req.local
 
-        const messages = await query('SELECT "senderId", message, "receiverId", "sendAt" FROM messages WHERE ("senderId" = $1 AND "receiverId" = $2) OR ("senderId" = $2 AND "receiverId" = $1) LIMIT 1', [currentUserId, userId])
+        const messages = await queryAll('SELECT "senderId", message, "receiverId", "sendAt" FROM messages WHERE ("senderId" = $1 AND "receiverId" = $2) OR ("senderId" = $2 AND "receiverId" = $1)', [currentUserId, userId])
 
         res.json(messages)
     }

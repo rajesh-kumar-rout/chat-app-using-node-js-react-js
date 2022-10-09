@@ -13,13 +13,14 @@ export default function EditAccountPage() {
     const [isLoading, setIsLoading] = useState(false)
     const [inputs, setInputs] = useState({
         name: account.name,
-        email: account.email
+        email: account.email,
+        profileImg: null
     })
 
     const handleInputChange = (e) => {
         setInputs({
             ...inputs,
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.type === "file" ? e.target.files[0] : e.target.value
         })
     }
 
@@ -49,18 +50,25 @@ export default function EditAccountPage() {
 
         if (isInputInvalid()) return
 
+        const payload = new FormData()
+        Object.keys(inputs).forEach(key => {
+            payload.append(key, inputs[key])
+        })
+
         setIsLoading(true)
         try {
             const response = await request("/auth/edit-account", {
                 method: "PATCH",
-                body: JSON.stringify(inputs)
+                body: payload
             })
             if (response.status === 200) {
                 alert("Account edited successfully")
+                const data = await response.json()
                 setAccount({
                     ...account,
                     name: inputs.name,
-                    email: inputs.email
+                    email: inputs.email,
+                    profileImgUrl: data.profileImgUrl
                 })
             } else if (response.status === 409) {
                 alert("Email already taken")
@@ -110,6 +118,17 @@ export default function EditAccountPage() {
                         name="email"
                         id="email"
                         value={inputs.email}
+                        onChange={handleInputChange}
+                    />
+                </div>
+
+                <div className={form.group}>
+                    <label className={form.label} htmlFor="proifleImg">Profile Image</label>
+                    <input
+                        type="file"
+                        className={form.textInput}
+                        name="profileImg"
+                        id="proifleImg"
                         onChange={handleInputChange}
                     />
                 </div>

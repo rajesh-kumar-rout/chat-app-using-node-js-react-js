@@ -1,9 +1,8 @@
 import pg from "pg"
 import dotenv from "dotenv"
 
-pg.types.setTypeParser(pg.types.builtins.INT8, (value) => parseInt(value))
-
 dotenv.config()
+pg.types.setTypeParser(pg.types.builtins.INT8, (value) => parseInt(value))
 
 const client = new pg.Client({
     connectionString: process.env.DATABASE_URL,

@@ -7,38 +7,41 @@ import { authenticate, authenticateSocket } from "./middlewares/authentication.j
 import { setSocketUser } from "./middlewares/socket.js"
 import cors from "cors"
 import { config } from "dotenv"
+import { setUp } from "./middlewares/setUp.js"
+import fileUpload from "express-fileupload"
+import { dirname } from "path"
 
 config()
 const app = express()
 const server = http.createServer(app)
-const io = new Server(server)
+const io = new Server(server, {
+    cors: {
+      origin: "http://localhost:3000"
+    }
+  })
 
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(fileUpload({ useTempFiles: true }))
+app.use(setUp)
 
 app.use("/api/users", authenticate, usersRoutes)
 app.use("/api/auth", authRoutes)
 
-io.use(authenticateSocket)
-io.use(setSocketUser)
+// io.use(authenticateSocket)
+// io.use(setSocketUser)
+import path from "path"
+app.get('/view', (req, res) => {
+    res.sendFile(path.resolve("./demo.html"))
+})
 
-io.on("connection", (socket) => {
-    socket.on("join", ({ roomId }) => {
-        socket.join(roomId)
-    })
+io.on('connection', (socket) => {
+    console.log("call");
 
-    socket.on("leave", ({ roomId }) => {
-        socket.leave(roomId)
-    })
-
-    socket.on("clientMsg", async ({ roomId, msg }) => {
-        io.to(roomId).emit("serverMsg", {
-            msg,
-            sendAt,
-            senderId: id,
-            senderName: name
-        })
+    socket.on("message", (message) => {
+        console.log("sending messsage...........");
+        io.emit("messages", message)
     })
 })
 

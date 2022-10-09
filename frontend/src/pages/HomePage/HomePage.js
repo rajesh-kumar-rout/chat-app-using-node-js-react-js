@@ -7,15 +7,17 @@ import styles from "./HomePage.module.css"
 
 export default function HomePage() {
     const request = useRequest()
-    const [rooms, setRooms] = useState([])
+    const [users, setUsers] = useState([])
+    const [query, setQuery] = useState("")
     const [isLoading, setIsLoading] = useState(false)
+    const filteredUsers = users.filter(user => user.name.toLowerCase().includes(query.toLowerCase()))
 
     const fetchRooms = async () => {
         setIsLoading(true)
         try {
-            const response = await request("/rooms")
+            const response = await request("/users")
             if (response.status === 200) {
-                setRooms(await response.json())
+                setUsers(await response.json())
             } else {
                 alert(SERVER_ERROR)
             }
@@ -30,20 +32,17 @@ export default function HomePage() {
         fetchRooms()
     }, [])
 
+    console.log(users);
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
                 <MdSearch size={24} />
-                <input type="search" placeholder="Search users..." autoFocus />
+                <input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Search users..." autoFocus />
             </div>
 
             <div className={styles.body}>
-                <User />
-                <User />
-                <User />
-                <User />
-                <User />
-                <User />
+                {filteredUsers.map(user => <User user={user} />)}
             </div>
         </div>
     )
