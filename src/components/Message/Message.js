@@ -1,13 +1,17 @@
+import { useContext } from "react"
+import { AccountContext } from "../Account"
 import styles from "./Message.module.css"
 
 export default function Message({ message }) {
+    const { account } = useContext(AccountContext)
+
     return (
-        <div data-right={message.userId % 2 === 0} className={styles.container}>
+        <div data-right={message.senderId === account.id} className={styles.container}>
             <div className={styles.innerContainer} data-right={message.userId % 2 === 0}>
-                <p data-right={message.userId % 2 === 0} className={styles.chat}>
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Perferendis nesciunt repellat eos corporis ut modi dolorem qui inventore perspiciatis.
+                <p data-right={message.senderId === account.id} className={styles.chat}>
+                    {message.message}
                 </p>
-                <p className={styles.sendAt}>12:13 PM</p>
+                <p className={styles.sendAt}>{message.sendAt}</p>
             </div>
         </div>
     )

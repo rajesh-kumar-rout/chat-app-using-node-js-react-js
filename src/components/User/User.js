@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom"
+import { DEFAULT_PROFILE_IMG } from "../../utils/constants"
 import styles from "./User.module.css"
 
-export default function User() {
+export default function User({ user }) {
     return (
-        <Link to="/rooms/1/chat" className={styles.container}>
-            <img src="https://cdn.pixabay.com/photo/2016/11/21/11/17/model-1844729__340.jpg" />
+        <Link to={`/rooms/chat`} state={user} className={styles.container}>
+            <img src={user.profileImgUrl ?? DEFAULT_PROFILE_IMG} />
             <div>
-                <h3 className={styles.username}>Rajesh Rout</h3>
+                <h3 className={styles.username}>{user.name}</h3>
                 <p className={styles.lastMsg}>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
             </div>
         </Link>
