@@ -1,7 +1,7 @@
 import { Router } from "express"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
-import { query } from "../database/connection.js"
+import { findOne, query } from "../database/connection.js"
 import { authenticate } from "../middlewares/authentication.js"
 import { body } from "express-validator"
 import { checkValidationError } from "../utils/validation.js"
@@ -20,7 +20,7 @@ routes.post(
     async (req, res) => {
         const { email, password } = req.body
 
-        const user = await query('SELECT * FROM users WHERE email = $1 LIMIT 1', [email])
+        const user = await findOne("SELECT * FROM users WHERE email = ? LIMIT 1", [email])
 
         if (!(user && await bcrypt.compare(password, user.password))) {
             return res.status(422).json({ message: "Invalid email or password" })
@@ -51,11 +51,11 @@ routes.post(
     async (req, res) => {
         const { name, email, password } = req.body
 
-        if (await query('SELECT 1 FROM users WHERE email = $1 LIMIT 1', [email])) {
+        if (await findOne("SELECT 1 FROM users WHERE email = ? LIMIT 1", [email])) {
             return res.status(409).json({ message: "Email already taken" })
         }
 
-        const user = await query('INSERT INTO users (name, email, password, "createdAt") VALUES ($1, $2, $3, $4) RETURNING id, name, email, "createdAt", "updatedAt"', [name, email, await bcrypt.hash(password, 10), new Date().toISOString()])
+        const user = await query("INSERT INTO users (name, email, password) VALUES (?, ?, ?, ?)", [name, email, await bcrypt.hash(password, 10)])
 
         res.status(201).json(user)
     }
@@ -76,13 +76,13 @@ routes.patch(
         const { currentUserId } = req.local
         const { oldPassword, newPassword } = req.body
 
-        const user = await query('SELECT password FROM users WHERE id = $1 LIMIT 1', [currentUserId])
+        const user = await query("SELECT password FROM users WHERE id = ? LIMIT 1", [currentUserId])
 
         if (!await bcrypt.compare(oldPassword, user.password)) {
             return res.status(422).json({ message: "Old password does not match" })
         }
 
-        await query('UPDATE users SET password = $1 WHERE id = $2', [await bcrypt.hash(newPassword, 10), currentUserId])
+        await query("UPDATE users SET password = ? WHERE id = ?", [await bcrypt.hash(newPassword, 10), currentUserId])
 
         res.json({ message: "Password changed successfully" })
     }
@@ -96,7 +96,7 @@ routes.get(
     async (req, res) => {
         const { currentUserId } = req.local
 
-        const user = await query('SELECT id, name, email, "createdAt", "updatedAt" FROM users WHERE id = $1 LIMIT 1', [currentUserId])
+        const user = await query("SELECT id, name, email, profileImgUrl, createdAt, updatedAt FROM users WHERE id = ? LIMIT 1", [currentUserId])
 
         res.json(user)
     }
@@ -122,7 +122,7 @@ routes.patch(
         const { currentUserId } = req.local
         const { name, email } = req.body
 
-        if (await query('SELECT 1 FROM users WHERE email = $1 AND id != $2 LIMIT 1', [email, currentUserId])) {
+        if (await query("SELECT 1 FROM users WHERE email = $1 AND id != $2 LIMIT 1", [email, currentUserId])) {
             return res.status(409).json({ message: "Email already taken" })
         }
 

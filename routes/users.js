@@ -6,7 +6,8 @@ import { body, param } from "express-validator"
 const router = Router()
 
 router.get("/", async (req, res) => {
-    const users = await query('(SELECT messages."receiverId" AS "userId" FROM messages WHERE "senderId" = $1) UNION (SELECT messages."senderId" AS "userId" FROM messages WHERE "receiverId" = $1)')
+    const users = await queryAll('SELECT * FROM "recentConnectedUsers"')
+    res.json(users)
 })
 
 router.post(
