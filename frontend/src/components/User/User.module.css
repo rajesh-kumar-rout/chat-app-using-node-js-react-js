@@ -20,12 +20,21 @@
     object-fit: cover;
 }
 
+.infoContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
 .username {
     color: var(--color-gray-800);
 }
 
 .lastMsg {
-    margin-top: 4px;
     font-size: 14px;
     color: var(--color-gray-600);
+    text-overflow: ellipsis;
+    overflow: hidden;
 }

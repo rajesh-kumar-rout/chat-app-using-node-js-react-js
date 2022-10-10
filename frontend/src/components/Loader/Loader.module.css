@@ -1,0 +1,28 @@
+.container{
+    height: 40px;
+    width: 40px;
+    border: 6px solid black;
+    border-radius: 100%;
+    border-bottom-color: transparent;
+    animation-name: spin;
+    animation-iteration-count: infinite;
+    animation-duration: 1000ms;
+    animation-timing-function: linear;
+}
+
+.wrapper{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes spin{
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}

@@ -28,6 +28,10 @@
     align-items: center;
 }
 
+.dropDownBtn p{
+    margin-right: 4px;
+}
+
 .dropDownBtn img{
     height: 40px;
     width: 40px;

@@ -5,7 +5,7 @@ import { query } from "../database/connection.js"
 import { authenticate } from "../middlewares/authentication.js"
 import { body } from "express-validator"
 import { checkFileMimeType, checkIsFileTruncated, checkValidationError, files } from "../utils/validation.js"
-import { upload } from "../utils/cloudinary.js"
+import { destroy, upload } from "../utils/cloudinary.js"
 
 const routes = Router()
 

@@ -6,7 +6,7 @@ import { body, param } from "express-validator"
 const router = Router()
 
 router.get("/", async (req, res) => {
-    const users = await queryAll('SELECT users.id, users.name, users."profileImgUrl" FROM users')
+    const users = await queryAll(`SELECT * FROM "getUsers"(${req.local.currentUserId})`)
     res.json(users)
 })
 

@@ -1,9 +1,12 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { MdArrowDropDown } from "react-icons/md"
 import { Link, useNavigate } from "react-router-dom"
+import { DEFAULT_PROFILE_IMG } from "../../utils/constants"
+import { AccountContext } from "../Account"
 import styles from "./NavBar.module.css"
 
 export default function NavBar() {
+    const { account } = useContext(AccountContext)
     const navigate = useNavigate()
     const [showDropDown, setShowDropDown] = useState(false)
 
@@ -28,7 +31,8 @@ export default function NavBar() {
 
             <div className={styles.dropDownWrapper}>
                 <div className={styles.dropDownBtn} onClick={handleAccountClick}>
-                    <img src="https://cdn.pixabay.com/photo/2016/11/21/11/17/model-1844729__340.jpg" />
+                    <p>{account.name}</p>
+                    <img src={account.profileImgUrl ?? DEFAULT_PROFILE_IMG} />
                     <MdArrowDropDown size={24} />
                 </div>
 

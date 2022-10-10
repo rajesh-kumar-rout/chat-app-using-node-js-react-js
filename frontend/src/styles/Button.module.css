@@ -12,4 +12,14 @@
     color: var(--color-white);
 }
 
+.btn[data-primary=true]:hover{
+    background-color: var(--color-gray-800);
+}
+
+.btn[data-primary=true]:disabled{
+    background-color: var(--color-gray-400);
+}
+
+
+
 
