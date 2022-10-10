@@ -1,4 +1,5 @@
 import { useContext } from "react"
+import { chatTime } from "../../utils/functions"
 import { AccountContext } from "../Account"
 import styles from "./Message.module.css"
 
@@ -11,7 +12,7 @@ export default function Message({ message }) {
                 <p data-right={message.senderId === account.id} className={styles.chat}>
                     {message.message}
                 </p>
-                <p className={styles.sendAt}>{message.sendAt}</p>
+                <p className={styles.sendAt}>{chatTime(message.sendAt)}</p>
             </div>
         </div>
     )

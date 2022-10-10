@@ -1,27 +1,28 @@
 import { useContext, useEffect, useRef, useState } from "react"
 import { MdSend, MdArrowBack } from "react-icons/md"
 import { Link, useLocation } from "react-router-dom"
+import { SocketContext } from "../../App"
 import { AccountContext } from "../../components/Account"
+import Loader from "../../components/Loader/Loader"
 import Message from "../../components/Message/Message"
 import useRequest from "../../hooks/useRequest"
 import { CLIENT_ERROR, SERVER_ERROR } from "../../utils/constants"
 import { messages } from "../../utils/faker"
 import styles from "./ChatPage.module.css"
-import { io } from "socket.io-client"
-
-const socket = io("ws://localhost:3001")
 
 export default function ChatPage() {
     const { account } = useContext(AccountContext)
     const request = useRequest()
     const { state } = useLocation()
     const [messages, setMessages] = useState([])
-    const scrollRef= useRef()
+    const [isLoading, setIsLoading] = useState(false)
     const [message, setMessage] = useState("")
+    const { socket } = useContext(SocketContext)
+    const bodyRef = useRef()
 
     useEffect(() => {
         socket.on("messages", (message) => {
-            if(message.receiverId === account.id || message.senderId === account.id){
+            if (message.receiverId === account.id || message.senderId === account.id) {
                 setMessages([
                     ...messages,
                     message
@@ -29,29 +30,18 @@ export default function ChatPage() {
             }
         })
 
-        return () => {
-            socket.off("connect");
-            socket.off("messages")
+        return () => socket.off("messages")
+    }, [messages])
+
+    useEffect(() => {
+        if (bodyRef.current) {
+            bodyRef.current.scrollTop = bodyRef.current.scrollHeight
         }
     }, [messages])
 
-    const fetchMessages = async () => {
-        try {
-            const response = await request(`/users/${state.id}/messages`)
-            if (response.status === 200) {
-                setMessages(await response.json())
-            } else {
-                alert(SERVER_ERROR)
-            }
-        } catch {
-            alert(CLIENT_ERROR)
-        }
-    }
-
     useEffect(() => {
-        var objDiv = document.getElementById("demo");
-objDiv.scrollTop = objDiv.scrollHeight;
-     }, [messages])
+        fetchMessages()
+    }, [])
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -72,13 +62,24 @@ objDiv.scrollTop = objDiv.scrollHeight;
             body: JSON.stringify(newMessage)
         })
 
-        
         setMessage("")
     }
 
-    useEffect(() => {
-        fetchMessages()
-    }, [])
+    const fetchMessages = async () => {
+        setIsLoading(true)
+        try {
+            const response = await request(`/users/${state.id}/messages`)
+            if (response.status === 200) {
+                setMessages(await response.json())
+            } else {
+                alert(SERVER_ERROR)
+            }
+        } catch {
+            alert(CLIENT_ERROR)
+        } finally {
+            setIsLoading(false)
+        }
+    }
 
     return (
         <div className={styles.container} >
@@ -90,7 +91,8 @@ objDiv.scrollTop = objDiv.scrollHeight;
                 <p>{state.name}</p>
             </div>
 
-            <div className={styles.body} ref={scrollRef} id="demo">
+            <div className={styles.body} ref={bodyRef}>
+                {isLoading && <Loader />}
                 {messages.map(message => <Message message={message} />)}
             </div>
 

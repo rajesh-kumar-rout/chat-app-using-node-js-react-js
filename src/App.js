@@ -9,24 +9,35 @@ import EditAccountPage from "./pages/EditAccountPage/EditAccountPage"
 import HomePage from "./pages/HomePage/HomePage"
 import LoginPage from "./pages/LoginPage/LoginPage"
 import Account from "./components/Account"
+import { createContext } from "react"
+import { io } from "socket.io-client"
+
+const socket = io("ws://localhost:3001")
+export const SocketContext = createContext()
 
 export default function App() {
     return (
-        <Routes>
-            <Route element={<RequireAuth />}>
-                <Route element={<Layout />}>
+        <SocketContext.Provider
+            value={{
+                socket
+            }}
+        >
+            <Routes>
+                <Route element={<RequireAuth />}>
                     <Route element={<Account />}>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/rooms/chat" element={<ChatPage />} />
-                        <Route path="/change-password" element={<ChangePasswordPage />} />
-                        <Route path="/edit-account" element={<EditAccountPage />} />
+                        <Route element={<Layout />}>
+                            <Route path="/" element={<HomePage />} />
+                            <Route path="/rooms/chat" element={<ChatPage />} />
+                            <Route path="/change-password" element={<ChangePasswordPage />} />
+                            <Route path="/edit-account" element={<EditAccountPage />} />
+                        </Route>
                     </Route>
                 </Route>
-            </Route>
-            <Route element={<RequireNotAuth />}>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/sign-up" element={<SignUpPage />} />
-            </Route>
-        </Routes>
+                <Route element={<RequireNotAuth />}>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/sign-up" element={<SignUpPage />} />
+                </Route>
+            </Routes>
+        </SocketContext.Provider>
     )
 }
