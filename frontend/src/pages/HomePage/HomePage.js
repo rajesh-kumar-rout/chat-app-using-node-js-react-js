@@ -19,15 +19,13 @@ export default function HomePage() {
 
     useEffect(() => {
         socket.on("messages", (message) => {
-            if (message.receiverId === account.id && users[0].id !== message.senderId) {
+            if (message.receiverId === account.id) {
                 setUsers([
-                    users.find(user => user.id === message.senderId),
+                    {
+                        ...users.find(user => user.id === message.senderId),
+                        message: message.message
+                    },
                     ...users.filter(user => user.id !== message.senderId)
-                ])
-            } else if (message.senderId === account.id && users[0].id !== message.receiverId) {
-                setUsers([
-                    users.find(user => user.id === message.receiverId),
-                    ...users.filter(user => user.id !== message.receiverId)
                 ])
             }
         })
@@ -59,17 +57,17 @@ export default function HomePage() {
         <div className={styles.container}>
             <div className={styles.header}>
                 <MdSearch size={24} />
-                <input 
-                    type="search" 
-                    value={query} 
-                    onChange={e => setQuery(e.target.value)} 
-                    placeholder="Search users..." 
-                    autoFocus 
+                <input
+                    type="search"
+                    value={query}
+                    onChange={e => setQuery(e.target.value)}
+                    placeholder="Search users..."
+                    autoFocus
                 />
             </div>
 
             <div className={styles.body}>
-                {isLoading && <Loader/>}
+                {isLoading && <Loader />}
                 {filteredUsers.map(user => <User user={user} />)}
             </div>
         </div>
