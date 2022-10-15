@@ -33,6 +33,10 @@ export default function HomePage() {
         return () => socket.off("messages")
     }, [users])
 
+    useEffect(() => {
+        fetchUsers()
+    }, [])
+    
     const fetchUsers = async () => {
         setIsLoading(true)
         try {
@@ -48,10 +52,6 @@ export default function HomePage() {
             setIsLoading(false)
         }
     }
-
-    useEffect(() => {
-        fetchUsers()
-    }, [])
 
     return (
         <div className={styles.container}>

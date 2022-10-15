@@ -13,10 +13,14 @@ export default function useRequest() {
             options.headers = {}
         }
 
-        if (typeof options.body === "string") {
+        if (options.body && !(options.body instanceof FormData)) {
             options.headers = {
                 ...options.headers,
                 "Content-Type": "application/json"
+            }
+            options = {
+                ...options,
+                body: JSON.stringify(options.body)
             }
         }
 

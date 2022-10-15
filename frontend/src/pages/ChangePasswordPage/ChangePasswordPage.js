@@ -57,7 +57,7 @@ export default function ChangePasswordPage() {
         try {
             const response = await request("/auth/change-password", {
                 method: "PATCH",
-                body: JSON.stringify(inputs)
+                body: inputs
             })
             if (response.status === 200) {
                 alert("Password changed successfully")
@@ -131,8 +131,8 @@ export default function ChangePasswordPage() {
                     />
                 </div>
 
-                <button 
-                    disabled={isLoading} 
+                <button
+                    disabled={isLoading}
                     className={button.btn}
                     data-primary={true}
                 >

@@ -49,7 +49,7 @@ export default function LoginPage() {
         try {
             const response = await request("/auth/login", {
                 method: "POST",
-                body: JSON.stringify(inputs)
+                body: inputs
             })
             if (response.status === 200) {
                 const { jwtToken } = await response.json()

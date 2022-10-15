@@ -7,7 +7,6 @@ import Loader from "../../components/Loader/Loader"
 import Message from "../../components/Message/Message"
 import useRequest from "../../hooks/useRequest"
 import { CLIENT_ERROR, SERVER_ERROR } from "../../utils/constants"
-import { messages } from "../../utils/faker"
 import styles from "./ChatPage.module.css"
 
 export default function ChatPage() {
@@ -30,13 +29,11 @@ export default function ChatPage() {
             }
         })
 
-        return () => socket.off("messages")
-    }, [messages])
-
-    useEffect(() => {
         if (bodyRef.current) {
             bodyRef.current.scrollTop = bodyRef.current.scrollHeight
         }
+
+        return () => socket.off("messages")
     }, [messages])
 
     useEffect(() => {
@@ -57,10 +54,14 @@ export default function ChatPage() {
 
         socket.emit("message", newMessage)
 
-        request(`/users/${state.id}/messages`, {
-            method: "POST",
-            body: JSON.stringify(newMessage)
-        })
+        try {
+            request(`/users/${state.id}/messages`, {
+                method: "POST",
+                body: newMessage
+            })
+        } catch {
+            alert(CLIENT_ERROR)
+        }
 
         setMessage("")
     }
