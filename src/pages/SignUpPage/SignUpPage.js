@@ -67,7 +67,7 @@ export default function SignUpPage() {
         try {
             const response = await request("/auth/sign-up", {
                 method: "POST",
-                body: JSON.stringify(inputs)
+                body: inputs
             })
             if (response.status === 201) {
                 alert("Sign up successfull.\nPlease login.")

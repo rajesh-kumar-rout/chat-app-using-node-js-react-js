@@ -1,7 +1,8 @@
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useEffect, useState } from "react"
 import { Outlet } from "react-router-dom"
 import { CLIENT_ERROR, SERVER_ERROR } from "../utils/constants"
 import useRequest from "../hooks/useRequest"
+import Loader from "./Loader/Loader"
 
 export const AccountContext = createContext()
 
@@ -18,10 +19,10 @@ export default function Account() {
             if (response.status === 200) {
                 setAccount(await response.json())
             } else {
-                setError(SERVER_ERROR)
+                alert(SERVER_ERROR)
             }
         } catch {
-            setError(CLIENT_ERROR)
+            alert(CLIENT_ERROR)
         } finally {
             setIsLoading(false)
         }
@@ -32,11 +33,7 @@ export default function Account() {
     }, [])
 
     if (isLoading) {
-        return <p>Loading...</p>
-    }
-
-    if (error) {
-        return <p>{error}</p>
+        return <Loader />
     }
 
     return (
