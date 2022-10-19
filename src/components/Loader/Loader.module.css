@@ -1,4 +1,16 @@
 .container{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.container[data-full=true]{
+    height: 100vh;
+}
+
+.loader{
     height: 40px;
     width: 40px;
     border: 6px solid black;
@@ -8,14 +20,6 @@
     animation-iteration-count: infinite;
     animation-duration: 1000ms;
     animation-timing-function: linear;
-}
-
-.wrapper{
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 @keyframes spin{

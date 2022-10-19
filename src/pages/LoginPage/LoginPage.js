@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom"
 import Footer from "../../components/Footer/Footer"
 import { useState } from "react"
-import { CLIENT_ERROR, SERVER_ERROR } from "../../utils/constants"
+import { SERVER_ERROR } from "../../utils/constants"
 import useRequest from "../../hooks/useRequest"
 import styles from "./LoginPage.module.css"
 import button from "../../styles/Button.module.css"
@@ -46,25 +46,20 @@ export default function LoginPage() {
         if (isInputInvalid()) return
 
         setIsLoading(true)
-        try {
-            const response = await request("/auth/login", {
-                method: "POST",
-                body: inputs
-            })
-            if (response.status === 200) {
-                const { jwtToken } = await response.json()
-                localStorage.setItem("jwtToken", jwtToken)
-                navigate("/", { replace: true })
-            } else if (response.status === 422) {
-                alert("Invalid email or password")
-            } else {
-                alert(SERVER_ERROR)
-            }
-        } catch {
-            alert(CLIENT_ERROR)
-        } finally {
-            setIsLoading(false)
+        const response = await request("/auth/login", {
+            method: "POST",
+            body: inputs
+        })
+        if (response.status === 200) {
+            const { jwtToken } = await response.json()
+            localStorage.setItem("jwtToken", jwtToken)
+            navigate("/", { replace: true })
+        } else if (response.status === 422) {
+            alert("Invalid email or password")
+        } else {
+            alert(SERVER_ERROR)
         }
+        setIsLoading(false)
     }
 
     return (
@@ -77,7 +72,7 @@ export default function LoginPage() {
                         <div className={form.errors}>
                             <p>Please correct the following errors.</p>
                             {errors.map(error => (
-                                <li>{error}</li>
+                                <li key={error}>{error}</li>
                             ))}
                         </div>
                     )}

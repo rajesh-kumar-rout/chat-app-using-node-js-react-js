@@ -64,24 +64,19 @@ export default function SignUpPage() {
         if (isInputInvalid()) return
 
         setIsLoading(true)
-        try {
-            const response = await request("/auth/sign-up", {
-                method: "POST",
-                body: inputs
-            })
-            if (response.status === 201) {
-                alert("Sign up successfull.\nPlease login.")
-                navigate("/login", { replace: true })
-            } else if (response.status === 409) {
-                alert("Email already taken")
-            } else {
-                alert(SERVER_ERROR)
-            }
-        } catch {
-            alert(CLIENT_ERROR)
-        } finally {
-            setIsLoading(false)
+        const response = await request("/auth/sign-up", {
+            method: "POST",
+            body: inputs
+        })
+        if (response.status === 201) {
+            alert("Sign up successfull.\nPlease login.")
+            navigate("/login", { replace: true })
+        } else if (response.status === 409) {
+            alert("Email already taken")
+        } else {
+            alert(SERVER_ERROR)
         }
+        setIsLoading(false)
     }
 
     return (
@@ -95,7 +90,7 @@ export default function SignUpPage() {
                             <p>Please correct the following errors.</p>
                             <ul>
                                 {errors.map(error => (
-                                    <li>{error}</li>
+                                    <li key={error}>{error}</li>
                                 ))}
                             </ul>
                         </div>

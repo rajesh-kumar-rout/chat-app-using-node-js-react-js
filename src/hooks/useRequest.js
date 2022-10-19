@@ -31,13 +31,22 @@ export default function useRequest() {
             }
         }
 
-        const response = await fetch(BASE_URL.concat(url), options)
+        try {
+            const response = await fetch(BASE_URL.concat(url), options)
+            if (response.status === 401) {
+                localStorage.clear()
+                navigate("/login", { replace: true })
+            } else if (response.status === 500) {
+                navigate("/error/Sorry, an unknown error occur", { replace: true })
+            } else {
+                return response
+            }
+        } catch {
+            let error = window.navigator.onLine ?
+                "Sorry, can not connect to server" :
+                "Please check your network condition"
 
-        if (response.status === 401) {
-            localStorage.clear()
-            navigate("/login", { replace: true })
+            navigate(`/error/${error}`, { replace: true })
         }
-
-        return response
     }
 }

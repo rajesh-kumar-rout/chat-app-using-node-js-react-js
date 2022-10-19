@@ -1,6 +1,6 @@
 import { useState } from "react"
 import useRequest from "../../hooks/useRequest"
-import { CLIENT_ERROR, SERVER_ERROR } from "../../utils/constants"
+import { SERVER_ERROR } from "../../utils/constants"
 import styles from "./ChangePasswordPage.module.css"
 import button from "../../styles/Button.module.css"
 import form from "../../styles/Form.module.css"
@@ -54,28 +54,23 @@ export default function ChangePasswordPage() {
         if (isInputInvalid()) return
 
         setIsLoading(true)
-        try {
-            const response = await request("/auth/change-password", {
-                method: "PATCH",
-                body: inputs
+        const response = await request("/auth/change-password", {
+            method: "PATCH",
+            body: inputs
+        })
+        if (response.status === 200) {
+            alert("Password changed successfully")
+            setInputs({
+                oldPassword: "",
+                newPassword: "",
+                confirmNewPassword: ""
             })
-            if (response.status === 200) {
-                alert("Password changed successfully")
-                setInputs({
-                    oldPassword: "",
-                    newPassword: "",
-                    confirmNewPassword: ""
-                })
-            } else if (response.status === 422) {
-                alert("Old password does not match")
-            } else {
-                alert(SERVER_ERROR)
-            }
-        } catch {
-            alert(CLIENT_ERROR)
-        } finally {
-            setIsLoading(false)
+        } else if (response.status === 422) {
+            alert("Old password does not match")
+        } else {
+            alert(SERVER_ERROR)
         }
+        setIsLoading(false)
     }
 
     return (
@@ -88,7 +83,7 @@ export default function ChangePasswordPage() {
                         <p>Please correct the following errors.</p>
                         <ul>
                             {errors.map(error => (
-                                <li>{error}</li>
+                                <li key={error}>{error}</li>
                             ))}
                         </ul>
                     </div>
