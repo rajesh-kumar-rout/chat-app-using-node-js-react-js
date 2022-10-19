@@ -6,9 +6,9 @@ pg.types.setTypeParser(pg.types.builtins.INT8, (value) => parseInt(value))
 
 const client = new pg.Client({
     connectionString: process.env.DATABASE_URL,
-    // ssl: {
-    //     rejectUnauthorized: false
-    // }
+    ssl: {
+        rejectUnauthorized: false
+    }
 })
 
 client.connect()
