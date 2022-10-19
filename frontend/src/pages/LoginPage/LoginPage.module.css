@@ -35,7 +35,7 @@
 }
 
 @media (max-width: 700px) {
-    .card {
+    .container {
         border-radius: 0px;
         border-left: 0;
         border-right: 0;
