@@ -26,7 +26,6 @@ app.use(express.static("views"))
 app.use("/api/users", authenticate, usersRoutes)
 app.use("/api/auth", authRoutes)
 
-
 io.on("connection", (socket) => {
     socket.on("message", (message) => {
         io.emit("messages", message)
