@@ -9,8 +9,8 @@
     left: 0;
     right: 0;
     z-index: 99;
-    background-color: var(--color-white);
-    border-top: 2px solid var(--color-gray-600);
+    background-color: var(--white);
+    border-top: 2px solid var(--gray300);
 }
 
 .container img {

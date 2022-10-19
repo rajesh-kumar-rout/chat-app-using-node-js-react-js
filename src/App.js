@@ -12,8 +12,9 @@ import Account from "./components/Account"
 import { createContext } from "react"
 import { io } from "socket.io-client"
 import ErrorPage from "./pages/ErrorPage/ErrorPage"
+import { SOCKET_URL } from "./utils/constants"
 
-const socket = io("ws://localhost:3001")
+const socket = io(SOCKET_URL)
 export const SocketContext = createContext()
 
 export default function App() {

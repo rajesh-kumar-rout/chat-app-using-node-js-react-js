@@ -57,7 +57,6 @@ export default function HomePage() {
                     value={query}
                     onChange={e => setQuery(e.target.value)}
                     placeholder="Search users..."
-                    autoFocus
                 />
             </div>
 

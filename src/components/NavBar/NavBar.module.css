@@ -1,5 +1,5 @@
 .container {
-    background-color: var(--color-white);
+    background-color: var(--white);
     display: flex;
     gap: 12px;
     justify-content: space-between;
@@ -10,10 +10,11 @@
     left: 0;
     right: 0;
     top: 0;
+    border-bottom: 2px solid var(--gray300);
 }
 
 .title {
-    color: var(--color-gray-600);
+    color: var(--gray600);
     font-size: 28px;
     font-weight: 800;
 }
@@ -42,7 +43,7 @@
 .dropDown {
     position: absolute;
     right: 0px;
-    background-color: var(--color-gray-600);
+    background-color: var(--gray600);
     border-radius: 4px;
     padding: 16px;
     display: flex;
@@ -53,7 +54,7 @@
 }
 
 .dropDown * {
-    color: var(--color-white);
+    color: var(--white);
     cursor: pointer;
 }
 
