@@ -23,14 +23,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(fileUpload({ useTempFiles: true }))
 app.use(setUp)
-app.use(async(req, res, next) => {
-    await new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve()
-        }, 1000)
-    })
-    next()
-})
 
 app.use("/api/users", authenticate, usersRoutes)
 app.use("/api/auth", authRoutes)

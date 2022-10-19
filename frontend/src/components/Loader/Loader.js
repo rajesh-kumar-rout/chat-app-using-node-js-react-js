@@ -1,9 +1,9 @@
 import styles from "./Loader.module.css"
 
-export default function Loader() {
+export default function Loader({ full }) {
     return (
-        <div className={styles.wrapper}>
-            <div className={styles.container}></div>
+        <div data-full={full} className={styles.container}>
+            <div className={styles.loader}></div>
         </div>
     )
 }

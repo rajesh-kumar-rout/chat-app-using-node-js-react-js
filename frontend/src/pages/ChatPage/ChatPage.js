@@ -6,7 +6,7 @@ import { AccountContext } from "../../components/Account"
 import Loader from "../../components/Loader/Loader"
 import Message from "../../components/Message/Message"
 import useRequest from "../../hooks/useRequest"
-import { CLIENT_ERROR, SERVER_ERROR } from "../../utils/constants"
+import { SERVER_ERROR } from "../../utils/constants"
 import styles from "./ChatPage.module.css"
 
 export default function ChatPage() {
@@ -54,32 +54,23 @@ export default function ChatPage() {
 
         socket.emit("message", newMessage)
 
-        try {
-            request(`/users/${state.id}/messages`, {
-                method: "POST",
-                body: newMessage
-            })
-        } catch {
-            alert(CLIENT_ERROR)
-        }
+        request(`/users/${state.id}/messages`, {
+            method: "POST",
+            body: newMessage
+        })
 
         setMessage("")
     }
 
     const fetchMessages = async () => {
         setIsLoading(true)
-        try {
-            const response = await request(`/users/${state.id}/messages`)
-            if (response.status === 200) {
-                setMessages(await response.json())
-            } else {
-                alert(SERVER_ERROR)
-            }
-        } catch {
-            alert(CLIENT_ERROR)
-        } finally {
-            setIsLoading(false)
+        const response = await request(`/users/${state.id}/messages`)
+        if (response.status === 200) {
+            setMessages(await response.json())
+        } else {
+            alert(SERVER_ERROR)
         }
+        setIsLoading(false)
     }
 
     return (
@@ -94,7 +85,7 @@ export default function ChatPage() {
 
             <div className={styles.body} ref={bodyRef}>
                 {isLoading && <Loader />}
-                {messages.map(message => <Message message={message} />)}
+                {messages.map(message => <Message key={message.id} message={message} />)}
             </div>
 
             <form onSubmit={handleSubmit} className={styles.footer}>

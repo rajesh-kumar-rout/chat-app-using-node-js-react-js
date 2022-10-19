@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { CLIENT_ERROR, SERVER_ERROR } from "../../utils/constants"
+import { SERVER_ERROR } from "../../utils/constants"
 import useRequest from "../../hooks/useRequest"
 import User from "../../components/User/User"
 import { MdSearch } from "react-icons/md"
@@ -39,18 +39,13 @@ export default function HomePage() {
     
     const fetchUsers = async () => {
         setIsLoading(true)
-        try {
-            const response = await request("/users")
-            if (response.status === 200) {
-                setUsers(await response.json())
-            } else {
-                alert(SERVER_ERROR)
-            }
-        } catch {
-            alert(CLIENT_ERROR)
-        } finally {
-            setIsLoading(false)
+        const response = await request("/users")
+        if (response.status === 200) {
+            setUsers(await response.json())
+        } else {
+            alert(SERVER_ERROR)
         }
+        setIsLoading(false)
     }
 
     return (
@@ -68,7 +63,7 @@ export default function HomePage() {
 
             <div className={styles.body}>
                 {isLoading && <Loader />}
-                {filteredUsers.map(user => <User user={user} />)}
+                {filteredUsers.map(user => <User key={user.id} user={user} />)}
             </div>
         </div>
     )

@@ -56,30 +56,25 @@ export default function EditAccountPage() {
         })
 
         setIsLoading(true)
-        try {
-            const response = await request("/auth/edit-account", {
-                method: "PATCH",
-                body: payload
+        const response = await request("/auth/edit-account", {
+            method: "PATCH",
+            body: payload
+        })
+        if (response.status === 200) {
+            alert("Account edited successfully")
+            const data = await response.json()
+            setAccount({
+                ...account,
+                name: inputs.name,
+                email: inputs.email,
+                profileImgUrl: data.profileImgUrl
             })
-            if (response.status === 200) {
-                alert("Account edited successfully")
-                const data = await response.json()
-                setAccount({
-                    ...account,
-                    name: inputs.name,
-                    email: inputs.email,
-                    profileImgUrl: data.profileImgUrl
-                })
-            } else if (response.status === 409) {
-                alert("Email already taken")
-            } else {
-                alert(SERVER_ERROR)
-            }
-        } catch {
-            alert(CLIENT_ERROR)
-        } finally {
-            setIsLoading(false)
+        } else if (response.status === 409) {
+            alert("Email already taken")
+        } else {
+            alert(SERVER_ERROR)
         }
+        setIsLoading(false)
     }
 
     return (
@@ -92,7 +87,7 @@ export default function EditAccountPage() {
                         <p>Please correct the following errors.</p>
                         <ul>
                             {errors.map(error => (
-                                <li>{error}</li>
+                                <li key={error}>{error}</li>
                             ))}
                         </ul>
                     </div>

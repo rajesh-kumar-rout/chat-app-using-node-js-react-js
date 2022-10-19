@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage/LoginPage"
 import Account from "./components/Account"
 import { createContext } from "react"
 import { io } from "socket.io-client"
+import ErrorPage from "./pages/ErrorPage/ErrorPage"
 
 const socket = io("ws://localhost:3001")
 export const SocketContext = createContext()
@@ -37,6 +38,7 @@ export default function App() {
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/sign-up" element={<SignUpPage />} />
                 </Route>
+                <Route path="/error/:error" element={<ErrorPage/>}/>
             </Routes>
         </SocketContext.Provider>
     )
