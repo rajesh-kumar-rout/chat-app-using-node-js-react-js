@@ -12,18 +12,18 @@
 }
 
 .chat {
-    background-color: var(--color-indigo-600);
+    background-color: var(--indigo600);
     padding: 8px;
     display: inline-block;
     border-radius: 4px;
     margin: 4px 0px;
-    color: var(--color-white);
+    color: var(--white);
     font-size: 14px;
     text-align: left;
 }
 
 .chat[data-right=true] {
-    background-color: var(--color-gray-600);
+    background-color: var(--gray600);
 }
 
 .sendAt {

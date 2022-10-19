@@ -11,16 +11,16 @@
 }
 
 .btn[data-primary=true]{
-    background-color: var(--color-gray-600);
-    color: var(--color-white);
+    background-color: var(--gray600);
+    color: var(--white);
 }
 
 .btn[data-primary=true]:hover{
-    background-color: var(--color-gray-800);
+    background-color: var(--gray800);
 }
 
 .btn[data-primary=true]:disabled{
-    background-color: var(--color-gray-400);
+    background-color: var(--gray400);
 }
 
 
