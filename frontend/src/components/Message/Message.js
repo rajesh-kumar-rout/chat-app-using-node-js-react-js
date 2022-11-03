@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { chatTime } from "../../utils/functions"
+import { chatTime } from "../../utils/func"
 import { AccountContext } from "../Account"
 import styles from "./Message.module.css"
 

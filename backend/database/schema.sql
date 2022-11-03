@@ -1,22 +1,21 @@
-CREATE TABLE "users" (
-    "id" SERIAL PRIMARY KEY,
-    "name" VARCHAR(30) NOT NULL,
-    "email" VARCHAR(30) NOT NULL UNIQUE,
-    "password" VARCHAR(100) NOT NULL,
-    "profileImgUrl" VARCHAR(100),
-    "profileImgId" VARCHAR(100),
-    "createdAt" TIMESTAMP DEFAULT NOW(),
-    "updatedAt" TIMESTAMP DEFAULT NOW()
+CREATE TABLE `users` (
+    `id` BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(30) NOT NULL,
+    `email` VARCHAR(30) NOT NULL UNIQUE,
+    `password` VARCHAR(20) NOT NULL,
+    `profileImgUrl` VARCHAR(50),
+    `profileImgId` VARCHAR(50),
+    `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE "messages" (
-    "id" SERIAL PRIMARY KEY,
-    "message" VARCHAR(255),
-    "senderId" INTEGER,
-    "receiverId" INTEGER,
-    "sendAt" TIMESTAMP DEFAULT NOW(),
-    
-    FOREIGN KEY ("senderId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY ("receiverId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE
+CREATE TABLE `messages` (
+    `id` BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
+    `message` VARCHAR(255),
+    `senderId` BIGINT(20),
+    `receiverId` BIGINT(20),
+    `sendAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (`senderId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (`receiverId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE
 );
 

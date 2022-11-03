@@ -1,11 +1,10 @@
 import { useContext, useEffect, useState } from "react"
-import { SERVER_ERROR } from "../../utils/constants"
-import useRequest from "../../hooks/useRequest"
-import User from "../../components/User/User"
-import { MdSearch } from "react-icons/md"
-import styles from "./HomePage.module.css"
 import { SocketContext } from "../../App"
 import { AccountContext } from "../../components/Account"
+import { MdSearch } from "react-icons/md"
+import useRequest from "../../hooks/useRequest"
+import User from "../../components/User/User"
+import styles from "./HomePage.module.css"
 import Loader from "../../components/Loader/Loader"
 
 export default function HomePage() {
@@ -16,6 +15,14 @@ export default function HomePage() {
     const filteredUsers = users.filter(user => user.name.toLowerCase().includes(query.toLowerCase()))
     const { socket } = useContext(SocketContext)
     const { account } = useContext(AccountContext)
+
+    const fetchUsers = async () => {
+        setIsLoading(true)
+        const { status } = await request("/users")
+        setUsers(await response.json())
+        setIsLoading(false)
+    }
+
 
     useEffect(() => {
         socket.on("messages", (message) => {
@@ -37,17 +44,6 @@ export default function HomePage() {
         fetchUsers()
     }, [])
     
-    const fetchUsers = async () => {
-        setIsLoading(true)
-        const response = await request("/users")
-        if (response.status === 200) {
-            setUsers(await response.json())
-        } else {
-            alert(SERVER_ERROR)
-        }
-        setIsLoading(false)
-    }
-
     return (
         <div className={styles.container}>
             <div className={styles.header}>

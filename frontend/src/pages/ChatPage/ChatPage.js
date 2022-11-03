@@ -1,12 +1,11 @@
 import { useContext, useEffect, useRef, useState } from "react"
-import { MdSend, MdArrowBack } from "react-icons/md"
+import { MdArrowBack } from "react-icons/md"
 import { Link, useLocation } from "react-router-dom"
 import { SocketContext } from "../../App"
 import { AccountContext } from "../../components/Account"
 import Loader from "../../components/Loader/Loader"
 import Message from "../../components/Message/Message"
 import useRequest from "../../hooks/useRequest"
-import { SERVER_ERROR } from "../../utils/constants"
 import styles from "./ChatPage.module.css"
 
 export default function ChatPage() {
@@ -14,7 +13,7 @@ export default function ChatPage() {
     const request = useRequest()
     const { state } = useLocation()
     const [messages, setMessages] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState("")
     const { socket } = useContext(SocketContext)
     const bodyRef = useRef()
@@ -40,10 +39,15 @@ export default function ChatPage() {
         fetchMessages()
     }, [])
 
-    const handleSubmit = async (e) => {
+    const submitForm = async (e) => {
         e.preventDefault()
 
         if (!message.trim()) return
+
+        if (message.length > 255) {
+            alert("Message length must be lower than 255 characters")
+            return
+        }
 
         const newMessage = {
             receiverId: state.id,
@@ -63,14 +67,10 @@ export default function ChatPage() {
     }
 
     const fetchMessages = async () => {
-        setIsLoading(true)
-        const response = await request(`/users/${state.id}/messages`)
-        if (response.status === 200) {
-            setMessages(await response.json())
-        } else {
-            alert(SERVER_ERROR)
-        }
-        setIsLoading(false)
+        setLoading(true)
+        const { body } = await request(`/users/${state.id}/messages`)
+        setMessages(body)
+        setLoading(false)
     }
 
     return (
@@ -88,16 +88,13 @@ export default function ChatPage() {
                 {messages.map(message => <Message key={message.id} message={message} />)}
             </div>
 
-            <form onSubmit={handleSubmit} className={styles.footer}>
+            <form onSubmit={submitForm} className={styles.footer}>
                 <input
                     type="text"
                     value={message}
                     onChange={e => setMessage(e.target.value)}
                     placeholder="Write Message..."
                 />
-                <button>
-                    <MdSend size={24} />
-                </button>
             </form>
         </div>
     )

@@ -13,6 +13,10 @@ export default function useRequest() {
             options.headers = {}
         }
 
+        options.headers = {
+            Accept: "application/json"
+        }
+
         if (options.body && !(options.body instanceof FormData)) {
             options.headers = {
                 ...options.headers,
@@ -32,21 +36,24 @@ export default function useRequest() {
         }
 
         try {
-            const response = await fetch(BASE_URL.concat(url), options)
-            if (response.status === 401) {
+            const res = await fetch(BASE_URL.concat(url), options)
+            if (res.status === 401) {
                 localStorage.clear()
                 navigate("/login", { replace: true })
-            } else if (response.status === 500) {
-                navigate("/error/Sorry, an unknown error occur", { replace: true })
+            } else if ((res.status >= 200 && res.status <= 299) || (res.status >= 400 && res.status <= 499)) {
+                return {
+                    status: res.status,
+                    body: await res.json()
+                }
             } else {
-                return response
+                navigate("/error/Sorry, an unknown error occur", { replace: true })
             }
         } catch {
-            let error = window.navigator.onLine ?
-                "Sorry, can not connect to server" :
-                "Please check your network condition"
-
-            navigate(`/error/${error}`, { replace: true })
+            if (window.navigator.onLine) {
+                navigate("/error/Sorry, can not connect to server", { replace: true })
+            } else {
+                navigate("/error/Please check your network condition", { replace: true })
+            }
         }
     }
 }

@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom"
-import Footer from "../../components/Footer/Footer"
 import { useState } from "react"
-import { SERVER_ERROR } from "../../utils/constants"
+import Footer from "../../components/Footer/Footer"
 import useRequest from "../../hooks/useRequest"
 import styles from "./LoginPage.module.css"
 import button from "../../styles/Button.module.css"
@@ -10,82 +9,52 @@ import form from "../../styles/Form.module.css"
 export default function LoginPage() {
     const request = useRequest()
     const navigate = useNavigate()
-    const [errors, setErrors] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [inputs, setInputs] = useState({
         email: "",
         password: ""
     })
 
-    const handleInputChange = (e) => {
+    const changeInputs = (e) => {
         setInputs({
             ...inputs,
             [e.target.name]: e.target.value
         })
     }
 
-    const isInputInvalid = () => {
-        const { email, password } = inputs
-        const errors = []
-
-        if (!email) {
-            errors.push("Email is required")
-        }
-
-        if (!password) {
-            errors.push("Password is required")
-        }
-
-        setErrors(errors)
-        return errors.length > 0
-    }
-
-    const handleSubmit = async (e) => {
+    const submitForm = async (e) => {
         e.preventDefault()
 
-        if (isInputInvalid()) return
-
-        setIsLoading(true)
-        const response = await request("/auth/login", {
+        setLoading(true)
+        const { status, body } = await request("/auth/login", {
             method: "POST",
             body: inputs
         })
-        if (response.status === 200) {
-            const { jwtToken } = await response.json()
-            localStorage.setItem("jwtToken", jwtToken)
+        if (status === 200) {
+            localStorage.setItem("jwtToken", body.jwtToken)
             navigate("/", { replace: true })
-        } else if (response.status === 422) {
+        } else if (status === 422) {
             alert("Invalid email or password")
-        } else {
-            alert(SERVER_ERROR)
         }
-        setIsLoading(false)
+        setLoading(false)
     }
 
     return (
         <>
             <div className={styles.container}>
-                <div className={styles.header}>LOGIN</div>
+                <div className={styles.header}>Login</div>
 
-                <form onSubmit={handleSubmit} className={styles.body}>
-                    {errors.length > 0 && (
-                        <div className={form.errors}>
-                            <p>Please correct the following errors.</p>
-                            {errors.map(error => (
-                                <li key={error}>{error}</li>
-                            ))}
-                        </div>
-                    )}
-
+                <form onSubmit={submitForm} className={styles.body}>
                     <div className={form.group}>
                         <label className={form.label} htmlFor="email">Email</label>
                         <input
                             type="email"
-                            className={form.textInput}
-                            name="email"
                             id="email"
-                            onChange={handleInputChange}
+                            name="email"
+                            className={form.textInput}
                             value={inputs.email}
+                            onChange={changeInputs}
+                            required
                         />
                     </div>
 
@@ -93,23 +62,25 @@ export default function LoginPage() {
                         <label className={form.label} htmlFor="password">Password</label>
                         <input
                             type="password"
-                            className={form.textInput}
-                            name="password"
                             id="password"
+                            name="password"
+                            className={form.textInput}
                             value={inputs.password}
-                            onChange={handleInputChange}
+                            onChange={changeInputs}
+                            required
                         />
                     </div>
 
-                    <button 
-                        disabled={isLoading} 
+                    <button
+                        disabled={loading}
                         className={button.btn}
-                        data-primary={true}
+                        data-primary
+                        data-full
                     >
-                        {isLoading ? "Loading..." : "LOGIN"}
+                        {loading ? "Loading..." : "Login"}
                     </button>
 
-                    <div className={styles.link}>Do not have account ? <Link to="/sign-up">Sign Up</Link></div>
+                    <p className={styles.link}>Do not have account ? <Link to="/create-account">Create account</Link></p>
                 </form>
             </div>
 
