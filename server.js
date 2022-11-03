@@ -1,15 +1,15 @@
-import express from "express"
-import http from "http"
-import { Server } from "socket.io"
-import usersRoutes from "./routes/users.js"
-import authRoutes from "./routes/auth.js"
-import { authenticate } from "./middlewares/authentication.js"
-import cors from "cors"
 import { config } from "dotenv"
 import { setUp } from "./middlewares/setUp.js"
+import { Server } from "socket.io"
+import { authenticate } from "./middlewares/authentication.js"
+import { cwd } from "process"
+import express from "express"
+import http from "http"
+import usersRoutes from "./routes/users.js"
+import authRoutes from "./routes/auth.js"
+import cors from "cors"
 import fileUpload from "express-fileupload"
 import path from "path"
-import { cwd } from "process"
 
 config()
 const app = express()
@@ -20,8 +20,8 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(fileUpload({ useTempFiles: true }))
-app.use(setUp)
 app.use(express.static("views"))
+app.use(setUp)
 
 app.use("/api/users", authenticate, usersRoutes)
 app.use("/api/auth", authRoutes)

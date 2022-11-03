@@ -1,12 +1,15 @@
 import { Router } from "express"
 import { checkValidationError } from "../utils/validation.js"
-import { query, queryAll } from "../database/connection.js"
+import { fetch, query, queryAll } from "../database/connection.js"
 import { body, param } from "express-validator"
 
 const router = Router()
 
 router.get("/", async (req, res) => {
-    const users = await queryAll(`SELECT * FROM "getUsers"(${req.local.currentUserId})`)
+    const { currentUserId } = req.local
+
+    const users = await query("SELECT users.id, users.name, users.profileImgUrl, tbl1.message FROM (SELECT ROW_NUMBER() OVER (PARTITION BY IF(senderId = 1, receiverId, senderId) ORDER BY sendAt DESC) as rowNum, messages.*, IF(senderId = :currentUserId, receiverId, senderId) AS userId FROM messages WHERE  senderId = :currentUserId OR receiverId = :currentUserId) AS tbl1 INNER JOIN users ON users.id = tbl1.userId WHERE tbl1.rowNum = :currentUserId ORDER BY sendAt DESC", { currentUserId })
+
     res.json(users)
 })
 
@@ -30,13 +33,13 @@ router.post(
             return res.status(404).json({ message: "You can not be both sender and receiver." })
         }
 
-        if (!await query('SELECT 1 FROM users WHERE id = $1 LIMIT 1', [userId])) {
+        if (!await fetch("SELECT 1 FROM users WHERE id = ? LIMIT 1", [userId])) {
             return res.status(404).json({ message: "Receiver not found" })
         }
 
-        const newMessage = await query('INSERT INTO messages ("senderId", message, "receiverId", "sendAt") VALUES ($1, $2, $3, $4) RETURNING *', [currentUserId, message, userId, sendAt])
+        await query("INSERT INTO messages (senderId, message, receiverId, sendAt) VALUES (?, ?, ?, ?)", [currentUserId, message, userId, sendAt])
 
-        res.status(201).json(newMessage)
+        res.sendStatus(204)
     }
 )
 
@@ -51,7 +54,7 @@ router.get(
         const { userId } = req.params
         const { currentUserId } = req.local
 
-        const messages = await queryAll('SELECT "senderId", message, "receiverId", "sendAt" FROM messages WHERE ("senderId" = $1 AND "receiverId" = $2) OR ("senderId" = $2 AND "receiverId" = $1)', [currentUserId, userId])
+        const messages = await queryAll('SELECT senderId, message, receiverId, sendAt FROM messages WHERE (senderId = :currentUserId AND receiverId = :userId) OR (senderId = :userId AND receiverId = :currentUserId)', { currentUserId, userId })
 
         res.json(messages)
     }
