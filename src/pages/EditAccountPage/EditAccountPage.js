@@ -1,6 +1,6 @@
 import { useContext, useState } from "react"
 import { AccountContext } from "../../components/Account"
-import { CLIENT_ERROR, SERVER_ERROR } from "../../utils/constants"
+import { SERVER_ERROR } from "../../utils/constants"
 import useRequest from "../../hooks/useRequest"
 import button from "../../styles/Button.module.css"
 import form from "../../styles/Form.module.css"
@@ -10,7 +10,7 @@ export default function EditAccountPage() {
     const request = useRequest()
     const { account, setAccount } = useContext(AccountContext)
     const [errors, setErrors] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [inputs, setInputs] = useState({
         name: account.name,
         email: account.email,
@@ -24,57 +24,55 @@ export default function EditAccountPage() {
         })
     }
 
-    const isInputInvalid = () => {
+    const isValidInput = () => {
         const name = inputs.name.trim()
         const email = inputs.email.trim()
-        const errors = []
+        const errors = {}
 
         if (!name) {
-            errors.push("Name is required")
+            errors["name"] = "Name is required"
         } else if (name.length > 30) {
-            errors.push("Name must be within 30 characters")
+            errors["name"] = "Name must be within 30 characters"
         }
 
         if (!email) {
-            errors.push("Email is required")
+            errors["email"] = "Email is required"
         } else if (email.length > 30) {
-            errors.push("Email must be within 30 characters")
+            errors["email"] = "Email must be within 30 characters"
         }
 
         setErrors(errors)
-        return errors.length > 0
+
+        return Object.keys(errors).length === 0
     }
 
-    const handleSubmit = async (e) => {
+    const submitForm = async (e) => {
         e.preventDefault()
 
-        if (isInputInvalid()) return
+        if (!isValidInput()) return
 
         const payload = new FormData()
         Object.keys(inputs).forEach(key => {
             payload.append(key, inputs[key])
         })
 
-        setIsLoading(true)
-        const response = await request("/auth/edit-account", {
+        setLoading(true)
+        const { status, data } = await request("/auth/edit-account", {
             method: "PATCH",
             body: payload
         })
-        if (response.status === 200) {
+        if (status === 200) {
             alert("Account edited successfully")
-            const data = await response.json()
             setAccount({
                 ...account,
                 name: inputs.name,
                 email: inputs.email,
                 profileImgUrl: data.profileImgUrl
             })
-        } else if (response.status === 409) {
-            alert("Email already taken")
-        } else {
-            alert(SERVER_ERROR)
+        } else if (status === 409) {
+            setErrors({ email: "Email already taken" })
         }
-        setIsLoading(false)
+        setLoading(false)
     }
 
     return (
@@ -82,54 +80,51 @@ export default function EditAccountPage() {
             <div className={styles.header}>EDIT ACCOUNT</div>
 
             <form onSubmit={handleSubmit} className={styles.body}>
-                {errors.length > 0 && (
-                    <div className={form.errors}>
-                        <p>Please correct the following errors.</p>
-                        <ul>
-                            {errors.map(error => (
-                                <li key={error}>{error}</li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
-
                 <div className={form.group}>
                     <label className={form.label} htmlFor="name">Name</label>
                     <input
                         type="text"
-                        className={form.textInput}
-                        name="name"
                         id="name"
+                        name="name"
+                        className={form.textInput}
                         value={inputs.name}
                         onChange={handleInputChange}
                     />
+                    {errors.name && <span className={form.error}>{errors.name}</span>}
                 </div>
 
                 <div className={form.group}>
                     <label className={form.label} htmlFor="email">Email</label>
                     <input
                         type="email"
-                        className={form.textInput}
-                        name="email"
                         id="email"
+                        name="email"
+                        className={form.textInput}
                         value={inputs.email}
                         onChange={handleInputChange}
                     />
+                    {errors.email && <span className={form.error}>{errors.email}</span>}
                 </div>
 
                 <div className={form.group}>
                     <label className={form.label} htmlFor="proifleImg">Profile Image</label>
                     <input
                         type="file"
-                        className={form.textInput}
-                        name="profileImg"
                         id="proifleImg"
+                        name="profileImg"
+                        className={form.textInput}
                         onChange={handleInputChange}
+                        accept="image/jpeg, image/jpg, image/png"
                     />
                 </div>
 
-                <button disabled={isLoading} className={button.btn} data-primary={true}>
-                    {isLoading ? "Loading..." : "SAVE CHANGES"}
+                <button 
+                    disabled={loading} 
+                    className={button.btn} 
+                    data-primary
+                    data-full
+                >
+                    {loading ? "Loading..." : "Save"}
                 </button>
             </form>
         </div>

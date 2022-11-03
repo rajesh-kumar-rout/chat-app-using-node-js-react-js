@@ -1,9 +1,8 @@
 import { Link, useNavigate } from "react-router-dom"
-import Footer from "../../components/Footer/Footer"
 import { useState } from "react"
-import { CLIENT_ERROR, SERVER_ERROR } from "../../utils/constants"
+import Footer from "../../components/Footer/Footer"
 import useRequest from "../../hooks/useRequest"
-import styles from "./SignUpPage.module.css"
+import styles from "./CreateAccountPage.module.css"
 import button from "../../styles/Button.module.css"
 import form from "../../styles/Form.module.css"
 
@@ -11,7 +10,7 @@ export default function SignUpPage() {
     const request = useRequest()
     const navigate = useNavigate()
     const [errors, setErrors] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [inputs, setInputs] = useState({
         name: "",
         email: "",
@@ -19,7 +18,7 @@ export default function SignUpPage() {
         confirmPassword: ""
     })
 
-    const handleInputChange = (e) => {
+    const changeInputs = (e) => {
         setInputs({
             ...inputs,
             [e.target.name]: e.target.value
@@ -30,125 +29,122 @@ export default function SignUpPage() {
         const name = inputs.name.trim()
         const email = inputs.email.trim()
         const { password, confirmPassword } = inputs
-        const errors = []
+        const errors = {}
 
         if (!name) {
-            errors.push("Name is required")
+            errors["name"] = "Name is required"
         } else if (name.length > 30) {
-            errors.push("Name must be within 30 characters")
+            errors["name"] = "Name must be within 30 characters"
         }
 
         if (email.length > 30) {
-            errors.push("Email must be within 30 characters")
+            errors["email"] = "Email must be within 30 characters"
         }
 
         if (!password) {
-            errors.push("Password is required")
+            errors["password"] = "Password is required"
         } else if (password.length > 20 || password.length < 6) {
-            errors.push("Passowrd must be within 6-20 characters")
+            errors["password"] = "Passowrd must be within 6-20 characters"
         }
 
         if (!confirmPassword) {
-            errors.push("Please confirm your password")
+            errors["confirmPassword"] = "Please confirm your password"
         } else if (confirmPassword !== password) {
-            errors.push("Password does not match")
+            errors["confirmPassword"] = "Password does not match"
         }
 
         setErrors(errors)
-        return errors.length > 0
+
+        return Object.keys(errors).length === 0
     }
 
-    const handleSubmit = async (e) => {
+    const submitForm = async (e) => {
         e.preventDefault()
 
-        if (isInputInvalid()) return
+        if (!isInputInvalid()) return
 
-        setIsLoading(true)
-        const response = await request("/auth/sign-up", {
+        setLoading(true)
+        const { status } = await request("/auth/sign-up", {
             method: "POST",
             body: inputs
         })
-        if (response.status === 201) {
+        if (status === 201) {
             alert("Sign up successfull.\nPlease login.")
             navigate("/login", { replace: true })
-        } else if (response.status === 409) {
-            alert("Email already taken")
-        } else {
-            alert(SERVER_ERROR)
+        } else if (status === 409) {
+            setErrors({ email: "Email already taken" })
         }
-        setIsLoading(false)
+        setLoading(false)
     }
 
     return (
         <>
-            <form onSubmit={handleSubmit} className={styles.container}>
-                <div className={styles.header}>SIGN UP</div>
+            <form onSubmit={submitForm} className={styles.container}>
+                <div className={styles.header}>Create new account</div>
 
                 <div className={styles.body}>
-                    {errors.length > 0 && (
-                        <div className={form.errors}>
-                            <p>Please correct the following errors.</p>
-                            <ul>
-                                {errors.map(error => (
-                                    <li key={error}>{error}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
                     <div className={form.group}>
                         <label className={form.label} htmlFor="name">Name</label>
                         <input
                             type="text"
-                            className={form.textInput}
-                            name="name"
                             id="name"
-                            onChange={handleInputChange}
+                            name="name"
+                            className={form.textInput}
                             value={inputs.name}
+                            onChange={changeInputs}
                         />
+                        {errors.name && <span className={form.error}>{errors.name}</span>}
                     </div>
 
                     <div className={form.group}>
                         <label className={form.label} htmlFor="email">Email</label>
                         <input
                             type="email"
-                            className={form.textInput}
-                            name="email"
                             id="email"
-                            onChange={handleInputChange}
+                            name="email"
+                            className={form.textInput}
                             value={inputs.email}
+                            onChange={changeInputs}
                         />
+                        {errors.email && <span className={form.error}>{errors.email}</span>}
                     </div>
 
                     <div className={form.group}>
                         <label className={form.label} htmlFor="password">Password</label>
                         <input
                             type="password"
-                            className={form.textInput}
-                            name="password"
                             id="password"
-                            onChange={handleInputChange}
+                            name="password"
+                            className={form.textInput}
                             value={inputs.password}
+                            onChange={changeInputs}
                         />
+                        {errors.password && <span className={form.error}>{errors.password}</span>}
                     </div>
 
                     <div className={form.group}>
                         <label className={form.label} htmlFor="confirmPassword">Confirm Password</label>
                         <input
                             type="password"
-                            className={form.textInput}
-                            name="confirmPassword"
                             id="confirmPassword"
-                            onChange={handleInputChange}
+                            name="confirmPassword"
+                            className={form.textInput}
                             value={inputs.confirmPassword}
+                            onChange={changeInputs}
                         />
+                        {errors.confirmPassword && <span className={form.error}>{errors.confirmPassword}</span>}
                     </div>
 
-                    <button disabled={isLoading} className={button.btn} data-primary={true}>
-                        {isLoading ? "Loading..." : "SIGN UP"}
+                    <button 
+                        disabled={loading} 
+                        className={button.btn} 
+                        data-primary
+                        data-full
+                    >
+                        {loading ? "Loading..." : "Create account"}
                     </button>
 
-                    <div className={styles.link}>Already have an account ? <Link to="/login">Login</Link></div>
+                    <p className={styles.link}>Already have an account ? <Link to="/login">Login</Link></p>
                 </div>
             </form>
 
