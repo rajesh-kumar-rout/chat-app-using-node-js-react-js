@@ -2,9 +2,9 @@ CREATE TABLE `users` (
     `id` BIGINT(20) PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(30) NOT NULL,
     `email` VARCHAR(30) NOT NULL UNIQUE,
-    `password` VARCHAR(20) NOT NULL,
-    `profileImgUrl` VARCHAR(50),
-    `profileImgId` VARCHAR(50),
+    `password` VARCHAR(100) NOT NULL,
+    `profileImgUrl` VARCHAR(100),
+    `profileImgId` VARCHAR(100),
     `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

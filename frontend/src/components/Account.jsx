@@ -1,32 +1,25 @@
 import { createContext, useEffect, useState } from "react"
 import { Outlet } from "react-router-dom"
-import { SERVER_ERROR } from "../utils/constants"
-import useRequest from "../hooks/useRequest"
-import Loader from "./Loader/Loader"
+import axios from "../utils/axios"
+import Loader from "./Loader"
 
 export const AccountContext = createContext()
 
 export default function Account() {
-    const request = useRequest()
-    const [isLoading, setIsLoading] = useState(true)
+    const [isFetching, setIsFetching] = useState(true)
     const [account, setAccount] = useState({})
 
     const fetchAccount = async () => {
-        setIsLoading(true)
-        const response = await request("/auth/account")
-        if (response.status === 200) {
-            setAccount(await response.json())
-        } else {
-            alert(SERVER_ERROR)
-        } 
-        setIsLoading(false)
+        const { data } = await axios.get("/auth/account")
+        setAccount(data)
+        setIsFetching(false)
     }
 
     useEffect(() => {
         fetchAccount()
     }, [])
 
-    if (isLoading) {
+    if (isFetching) {
         return <Loader full/>
     }
 

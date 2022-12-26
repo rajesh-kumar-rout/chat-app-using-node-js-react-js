@@ -14,7 +14,11 @@ import path from "path"
 config()
 const app = express()
 const server = http.createServer(app)
-const io = new Server(server)
+const io = new Server(server, {
+    cors: {
+        origin: "http://localhost:3000"
+    }
+})
 
 app.use(cors())
 app.use(express.json())
@@ -32,9 +36,9 @@ io.on("connection", (socket) => {
     })
 })
 
-app.get("*", (req, res) => {
-    res.sendFile(path.resolve(cwd() + "/views/index.html"))
-})
+// app.get("*", (req, res) => {
+//     res.sendFile(path.resolve(cwd() + "/views/index.html"))
+// })
 
 server.listen(process.env.PORT, () => {
     console.log(`listening to port ${process.env.PORT}...`)

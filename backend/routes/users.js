@@ -1,15 +1,12 @@
 import { Router } from "express"
 import { checkValidationError } from "../utils/validation.js"
-import { fetch, query, queryAll } from "../database/connection.js"
+import { fetch, query } from "../database/connection.js"
 import { body, param } from "express-validator"
 
 const router = Router()
 
 router.get("/", async (req, res) => {
-    const { currentUserId } = req.local
-
-    const users = await query("SELECT users.id, users.name, users.profileImgUrl, tbl1.message FROM (SELECT ROW_NUMBER() OVER (PARTITION BY IF(senderId = 1, receiverId, senderId) ORDER BY sendAt DESC) as rowNum, messages.*, IF(senderId = :currentUserId, receiverId, senderId) AS userId FROM messages WHERE  senderId = :currentUserId OR receiverId = :currentUserId) AS tbl1 INNER JOIN users ON users.id = tbl1.userId WHERE tbl1.rowNum = :currentUserId ORDER BY sendAt DESC", { currentUserId })
-
+    const users = await query("SELECT * FROM users")
     res.json(users)
 })
 
@@ -54,7 +51,7 @@ router.get(
         const { userId } = req.params
         const { currentUserId } = req.local
 
-        const messages = await queryAll('SELECT senderId, message, receiverId, sendAt FROM messages WHERE (senderId = :currentUserId AND receiverId = :userId) OR (senderId = :userId AND receiverId = :currentUserId)', { currentUserId, userId })
+        const messages = await query('SELECT senderId, message, receiverId, sendAt FROM messages WHERE (senderId = :currentUserId AND receiverId = :userId) OR (senderId = :userId AND receiverId = :currentUserId)', { currentUserId, userId })
 
         res.json(messages)
     }

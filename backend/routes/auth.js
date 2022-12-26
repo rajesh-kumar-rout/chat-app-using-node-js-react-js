@@ -21,7 +21,7 @@ routes.post(
     async (req, res) => {
         const { email, password } = req.body
 
-        const user = await fetch('SELECT * FROM users WHERE email = ? LIMIT 1', [email])
+        const user = await fetch("SELECT * FROM users WHERE email = ? LIMIT 1", [email])
 
         if (!(user && await bcrypt.compare(password, user.password))) {
             return res.status(422).json({ message: "Invalid email or password" })
@@ -34,7 +34,7 @@ routes.post(
 )
 
 routes.post(
-    "/create-user",
+    "/create-account",
 
     body("name")
         .trim()
@@ -56,9 +56,11 @@ routes.post(
             return res.status(409).json({ message: "Email already taken" })
         }
 
-        await query("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", [name, email, await bcrypt.hash(password, 10)])
+        const { insertId } = await query("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", [name, email, await bcrypt.hash(password, 10)])
 
-        res.status(201)
+        const jwtToken = jwt.sign({ currentUserId: insertId }, process.env.JWT_SECRECT, { expiresIn: "1h" })
+
+        res.status(201).json({ jwtToken })
     }
 )
 
@@ -131,9 +133,11 @@ routes.patch(
         const { name, email } = req.body
         const { profileImg } = req.files
 
+        console.log(currentUserId);
+
         const user = await fetch("SELECT * FROM users WHERE id = ? LIMIT 1", [currentUserId])
 
-        if (await query("SELECT 1 FROM users WHERE email = ? AND id != ? LIMIT 1", [email, currentUserId])) {
+        if (await fetch("SELECT 1 FROM users WHERE email = ? AND id != ? LIMIT 1", [email, currentUserId])) {
             return res.status(409).json({ message: "Email already taken" })
         }
 
@@ -146,7 +150,7 @@ routes.patch(
 
         await query("UPDATE users SET name = ?, email = ?, profileImgUrl = ?, profileImgId = ? WHERE id = ?", [name, email, user.profileImgUrl, user.profileImgId, currentUserId])
 
-        res.sendStatus(201)
+        res.json({ profileImgUrl: user.profileImgUrl })
     }
 )
 

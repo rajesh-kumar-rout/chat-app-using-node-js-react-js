@@ -1,33 +1,33 @@
 import { Routes, Route } from "react-router-dom"
-import Layout from "./components/Layout/Layout"
-import RequireAuth from "./components/RequireAuth"
-import RequireNotAuth from "./components/RequireNotAuth"
-import SignUpPage from "./pages/CreateAccountPage/CreateAccountPage"
-import ChangePasswordPage from "./pages/ChangePasswordPage/ChangePasswordPage"
-import ChatPage from "./pages/ChatPage/ChatPage"
-import EditAccountPage from "./pages/EditAccountPage/EditAccountPage"
-import HomePage from "./pages/HomePage/HomePage"
-import LoginPage from "./pages/LoginPage/LoginPage"
-import Account from "./components/Account"
 import { createContext } from "react"
 import { io } from "socket.io-client"
-import ErrorPage from "./pages/ErrorPage/ErrorPage"
 import { SOCKET_URL } from "./utils/constants"
+import ChangePasswordPage from "./pages/ChangePasswordPage"
+import ChatPage from "./pages/ChatPage"
+import EditAccountPage from "./pages/EditAccountPage"
+import HomePage from "./pages/HomePage"
+import LoginPage from "./pages/LoginPage"
+import Account from "./components/Account"
+import SignUpPage from "./pages/SignUpPage"
+import NotAuthenticate from "./components/NotAuthenticate"
+import Authenticae from "./components/Authenticate"
+import MasterLayout from "./components/MasterLayout"
 
 const socket = io(SOCKET_URL)
-export const SocketContext = createContext()
+
+export const AppContext = createContext()
 
 export default function App() {
     return (
-        <SocketContext.Provider
+        <AppContext.Provider
             value={{
                 socket
             }}
         >
             <Routes>
-                <Route element={<RequireAuth />}>
+                <Route element={<Authenticae/>}>
                     <Route element={<Account />}>
-                        <Route element={<Layout />}>
+                        <Route element={<MasterLayout />}>
                             <Route path="/" element={<HomePage />} />
                             <Route path="/rooms/chat" element={<ChatPage />} />
                             <Route path="/change-password" element={<ChangePasswordPage />} />
@@ -35,12 +35,11 @@ export default function App() {
                         </Route>
                     </Route>
                 </Route>
-                <Route element={<RequireNotAuth />}>
+                <Route element={<NotAuthenticate/>}>
                     <Route path="/login" element={<LoginPage />} />
-                    <Route path="/sign-up" element={<SignUpPage />} />
+                    <Route path="/create-account" element={<SignUpPage />} />
                 </Route>
-                <Route path="/error/:error" element={<ErrorPage/>}/>
             </Routes>
-        </SocketContext.Provider>
+        </AppContext.Provider>
     )
 }

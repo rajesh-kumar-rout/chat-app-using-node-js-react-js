@@ -1,8 +1,0 @@
-.container{
-    margin: 70px 0px 60px;
-    height: calc(100vh - 130px);
-    overflow-y: auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
